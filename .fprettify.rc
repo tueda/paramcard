@@ -1,0 +1,7 @@
+indent = 4
+line-length = 132
+whitespace = 3
+strict-indent = True
+enable-decl = True
+enable-replacements = True
+c-relations = True

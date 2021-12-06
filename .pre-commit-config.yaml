@@ -1,0 +1,31 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+    -   id: check-case-conflict
+    -   id: check-merge-conflict
+    -   id: check-symlinks
+    -   id: check-yaml
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+-   repo: https://github.com/pseewald/fprettify
+    rev: v0.3.7
+    hooks:
+    -   id: fprettify
+        exclude: '.*(\.f|\.F)$'
+-   repo: https://github.com/editorconfig-checker/editorconfig-checker.python
+    rev: 2.3.54
+    hooks:
+    -   id: editorconfig-checker
+        exclude: '.*(\.f|\.F|\.f90|\.F90)$'
+-   repo: https://github.com/editorconfig-checker/editorconfig-checker.python
+    rev: 2.3.54
+    hooks:
+    -   id: editorconfig-checker
+        name: Check .editorconfig rules (Fortran)
+        files: '.*(\.f|\.F|\.f90|\.F90)$'
+        args: [-disable-indentation]
+-   repo: https://github.com/jorisroovers/gitlint
+    rev: v0.17.0
+    hooks:
+    -   id: gitlint

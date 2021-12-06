@@ -1,0 +1,9 @@
+name = "paramcard"
+version = "0.0.1"
+license = "MIT"
+author = "Takahiro Ueda"
+maintainer = "tueda@st.seikei.ac.jp"
+
+[dev-dependencies]
+test-drive.git = "https://github.com/fortran-lang/test-drive"
+test-drive.tag = "v0.4.0"
