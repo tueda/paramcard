@@ -1,0 +1,52 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: 0 0 1 * * # monthly
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-18.04, fc: gfortran-5  }
+          - { os: ubuntu-18.04, fc: gfortran-6  }
+          - { os: ubuntu-18.04, fc: gfortran-7  }
+          - { os: ubuntu-20.04, fc: gfortran-8  }
+          - { os: ubuntu-20.04, fc: gfortran-9  }
+          - { os: ubuntu-20.04, fc: gfortran-10 }
+          - { os: macos-11,     fc: gfortran-11 }
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Set up fpm
+        uses: fortran-lang/setup-fpm@v3
+        with:
+          fpm-version: v0.5.0
+
+      - name: Install dependencies (apt)
+        if: >-
+          (matrix.os == 'ubuntu-18.04' && (
+            matrix.fc == 'gfortran-4.8' ||
+            matrix.fc == 'gfortran-5' ||
+            matrix.fc == 'gfortran-6' ||
+            matrix.fc == 'gfortran-8' ||
+            matrix.fc == 'gfortran-11')) ||
+          (matrix.os == 'ubuntu-20.04' && (
+            matrix.fc == 'gfortran-7' ||
+            matrix.fc == 'gfortran-8' ||
+            matrix.fc == 'gfortran-11'))
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ${{ matrix.fc }}
+
+      - name: Run test
+        run: fpm test
+        env:
+          FPM_FC: ${{ matrix.fc }}
