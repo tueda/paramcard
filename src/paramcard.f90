@@ -242,6 +242,7 @@ module paramcard
 
     public :: get_param
     public :: write_param_summary
+    public :: parse_param
 
     interface get_param
         !! Retrieve a parameter.
@@ -676,6 +677,25 @@ contains
         end if
     end subroutine write_param_summary
 
+    subroutine parse_param(str)
+        !! Parse a string containing `'NAME = VALUE'`.
+
+        character(len=*), intent(in) :: str
+            !! The string to be parsed.
+
+        character(len=:), allocatable :: str1
+
+        str1 = to_upper(remove_spaces(str))
+
+        ! NOTE: this subroutine accepts undocumented special commands.
+
+        if (str1 == 'PARAMCARDCOMMAND:CLEAR') then
+            call clear
+        else
+            call parse_line(str)
+        end if
+    end subroutine
+
     subroutine get_param_str_impl(name, variable, canon_name)
         !! Retrieve a string parameter.
 
@@ -725,6 +745,23 @@ contains
 
         inited = .true.
     end subroutine init
+
+    subroutine clear
+        !! Clear all parameters.
+
+        call init
+
+        deallocate (params)
+        deallocate (logs)
+
+        n_params = 0
+        params_capacity = INITIAL_CAPACITY
+        allocate (params(params_capacity))
+
+        n_logs = 0
+        logs_capacity = INITIAL_CAPACITY
+        allocate (logs(logs_capacity))
+    end subroutine clear
 
     subroutine parse_arguments
         !! Parse the command line arguments and add parameters found in them.
