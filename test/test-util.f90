@@ -4,11 +4,11 @@ module test_util
     implicit none
     private
 
-    public :: collect_util
+    public :: collect_test_util
 
 contains
 
-    subroutine collect_util(testsuite)
+    subroutine collect_test_util(testsuite)
         type(unittest_type), allocatable, intent(out) :: testsuite(:)
 
         testsuite = [ &
@@ -17,12 +17,15 @@ contains
                     new_unittest("to_str", test_to_str), &
                     new_unittest("to_upper", test_to_upper) &
                     ]
-    end subroutine collect_util
+    end subroutine collect_test_util
 
     subroutine test_is_close(error)
         type(error_type), allocatable, intent(out) :: error
 
-        call check(error,.not. is_close(1.0d0, 2.0d0))
+        call check(error,.not. is_close(1.000e0, 1.001e0))
+        if (allocated(error)) return
+
+        call check(error,.not. is_close(1.000d0, 1.001d0))
         if (allocated(error)) return
     end subroutine test_is_close
 
@@ -38,6 +41,9 @@ contains
 
         call check(error, to_str(12345) == '12345')
         if (allocated(error)) return
+
+        call check(error, remove_spaces(to_str(-12345)) == '-12345')
+        if (allocated(error)) return
     end subroutine test_to_str
 
     subroutine test_to_upper(error)
@@ -52,7 +58,7 @@ end module test_util
 program tester
     use, intrinsic :: iso_fortran_env, only: error_unit
     use testdrive, only: run_testsuite, new_testsuite, testsuite_type
-    use test_util, only: collect_util
+    use test_util, only: collect_test_util
     implicit none
     integer :: stat, is
     type(testsuite_type), allocatable :: testsuites(:)
@@ -61,7 +67,7 @@ program tester
     stat = 0
 
     testsuites = [ &
-                 new_testsuite("util", collect_util) &
+                 new_testsuite("util", collect_test_util) &
                  ]
 
     do is = 1, size(testsuites)
