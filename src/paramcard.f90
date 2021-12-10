@@ -308,6 +308,10 @@ contains
 
         character(len=:), allocatable :: tmp, canon_name
 
+        ! Note: `get_param_str('x', x, x)` does not work (at least, gfortran 11 on Linux seems
+        ! to deallocate `x` when it is passed to an `intent(out)` argument, leading to
+        ! `present(default_value) == .false.`), so we don't need to consider such a case.
+
         call get_param_str_impl(name, tmp, canon_name)
 
         if (allocated(tmp)) then
@@ -372,8 +376,15 @@ contains
         integer(kind=int8), intent(in), optional :: default_value
             !! The value to be used if the parameter not found.
 
+        integer(kind=int8) :: default_value_
         character(len=:), allocatable :: tmp, canon_name
         integer :: iostat
+
+        ! Copy the default value to allow the case that `variable` and `default_value`
+        ! point to the same memory location.
+        if (present(default_value)) then
+            default_value_ = default_value
+        end if
 
         call get_param_str_impl(name, tmp, canon_name)
 
@@ -385,15 +396,15 @@ contains
                 error stop
             end if
         else if (present(default_value)) then
-            variable = default_value
+            variable = default_value_
         else
             write (error_unit, '(a)') '[ERROR] paramcard: integer parameter undefined: '//canon_name
             error stop
         end if
 
         if (present(default_value)) then
-            if (variable /= default_value) then
-                call add_log(canon_name, to_str(variable), to_str(default_value))
+            if (variable /= default_value_) then
+                call add_log(canon_name, to_str(variable), to_str(default_value_))
                 return
             end if
         end if
@@ -410,8 +421,15 @@ contains
         integer(kind=int16), intent(in), optional :: default_value
             !! The value to be used if the parameter not found.
 
+        integer(kind=int16) :: default_value_
         character(len=:), allocatable :: tmp, canon_name
         integer :: iostat
+
+        ! Copy the default value to allow the case that `variable` and `default_value`
+        ! point to the same memory location.
+        if (present(default_value)) then
+            default_value_ = default_value
+        end if
 
         call get_param_str_impl(name, tmp, canon_name)
 
@@ -423,15 +441,15 @@ contains
                 error stop
             end if
         else if (present(default_value)) then
-            variable = default_value
+            variable = default_value_
         else
             write (error_unit, '(a)') '[ERROR] paramcard: integer parameter undefined: '//canon_name
             error stop
         end if
 
         if (present(default_value)) then
-            if (variable /= default_value) then
-                call add_log(canon_name, to_str(variable), to_str(default_value))
+            if (variable /= default_value_) then
+                call add_log(canon_name, to_str(variable), to_str(default_value_))
                 return
             end if
         end if
@@ -448,8 +466,15 @@ contains
         integer(kind=int32), intent(in), optional :: default_value
             !! The value to be used if the parameter not found.
 
+        integer(kind=int32) :: default_value_
         character(len=:), allocatable :: tmp, canon_name
         integer :: iostat
+
+        ! Copy the default value to allow the case that `variable` and `default_value`
+        ! point to the same memory location.
+        if (present(default_value)) then
+            default_value_ = default_value
+        end if
 
         call get_param_str_impl(name, tmp, canon_name)
 
@@ -461,15 +486,15 @@ contains
                 error stop
             end if
         else if (present(default_value)) then
-            variable = default_value
+            variable = default_value_
         else
             write (error_unit, '(a)') '[ERROR] paramcard: integer parameter undefined: '//canon_name
             error stop
         end if
 
         if (present(default_value)) then
-            if (variable /= default_value) then
-                call add_log(canon_name, to_str(variable), to_str(default_value))
+            if (variable /= default_value_) then
+                call add_log(canon_name, to_str(variable), to_str(default_value_))
                 return
             end if
         end if
@@ -486,8 +511,15 @@ contains
         integer(kind=int64), intent(in), optional :: default_value
             !! The value to be used if the parameter not found.
 
+        integer(kind=int64) :: default_value_
         character(len=:), allocatable :: tmp, canon_name
         integer :: iostat
+
+        ! Copy the default value to allow the case that `variable` and `default_value`
+        ! point to the same memory location.
+        if (present(default_value)) then
+            default_value_ = default_value
+        end if
 
         call get_param_str_impl(name, tmp, canon_name)
 
@@ -499,15 +531,15 @@ contains
                 error stop
             end if
         else if (present(default_value)) then
-            variable = default_value
+            variable = default_value_
         else
             write (error_unit, '(a)') '[ERROR] paramcard: integer parameter undefined: '//canon_name
             error stop
         end if
 
         if (present(default_value)) then
-            if (variable /= default_value) then
-                call add_log(canon_name, to_str(variable), to_str(default_value))
+            if (variable /= default_value_) then
+                call add_log(canon_name, to_str(variable), to_str(default_value_))
                 return
             end if
         end if
@@ -524,8 +556,15 @@ contains
         real(kind=real32), intent(in), optional :: default_value
             !! The value to be used if the parameter not found.
 
+        real(kind=real32) :: default_value_
         character(len=:), allocatable :: tmp, canon_name
         integer :: iostat
+
+        ! Copy the default value to allow the case that `variable` and `default_value`
+        ! point to the same memory location.
+        if (present(default_value)) then
+            default_value_ = default_value
+        end if
 
         call get_param_str_impl(name, tmp, canon_name)
 
@@ -537,15 +576,15 @@ contains
                 error stop
             end if
         else if (present(default_value)) then
-            variable = default_value
+            variable = default_value_
         else
             write (error_unit, '(a)') '[ERROR] paramcard: real parameter undefined: '//canon_name
             error stop
         end if
 
         if (present(default_value)) then
-            if (.not. is_close(variable, default_value)) then
-                call add_log(canon_name, to_str(variable), to_str(default_value))
+            if (.not. is_close(variable, default_value_)) then
+                call add_log(canon_name, to_str(variable), to_str(default_value_))
                 return
             end if
         end if
@@ -562,8 +601,15 @@ contains
         real(kind=real64), intent(in), optional :: default_value
             !! The value to be used if the parameter not found.
 
+        real(kind=real64) :: default_value_
         character(len=:), allocatable :: tmp, canon_name
         integer :: iostat
+
+        ! Copy the default value to allow the case that `variable` and `default_value`
+        ! point to the same memory location.
+        if (present(default_value)) then
+            default_value_ = default_value
+        end if
 
         call get_param_str_impl(name, tmp, canon_name)
 
@@ -575,15 +621,15 @@ contains
                 error stop
             end if
         else if (present(default_value)) then
-            variable = default_value
+            variable = default_value_
         else
             write (error_unit, '(a)') '[ERROR] paramcard: real parameter undefined: '//canon_name
             error stop
         end if
 
         if (present(default_value)) then
-            if (.not. is_close(variable, default_value)) then
-                call add_log(canon_name, to_str(variable), to_str(default_value))
+            if (.not. is_close(variable, default_value_)) then
+                call add_log(canon_name, to_str(variable), to_str(default_value_))
                 return
             end if
         end if
