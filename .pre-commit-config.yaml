@@ -8,23 +8,45 @@ repos:
     -   id: check-yaml
     -   id: end-of-file-fixer
     -   id: trailing-whitespace
+
 -   repo: https://github.com/pseewald/fprettify
     rev: v0.3.7
     hooks:
     -   id: fprettify
-        exclude: '.*(\.f|\.F)$'
+        name: auto-formatter for modern fortran source code (fypp)
+        files: \.fypp$
+
+-   repo: local
+    hooks:
+    -   id: fypp
+        name: Run fypp
+        entry: python3 scripts/run-fypp.py
+        language: python
+        files: \.fypp$
+        additional_dependencies:
+        -   fprettify==0.3.7
+        -   fypp==3.1
+
+-   repo: https://github.com/pseewald/fprettify
+    rev: v0.3.7
+    hooks:
+    -   id: fprettify
+        files: '\.f90|\.F90$'
+
 -   repo: https://github.com/editorconfig-checker/editorconfig-checker.python
-    rev: 2.3.54
+    rev: 2.4.0
     hooks:
     -   id: editorconfig-checker
         exclude: '.*(\.f|\.F|\.f90|\.F90)$'
+
 -   repo: https://github.com/editorconfig-checker/editorconfig-checker.python
-    rev: 2.3.54
+    rev: 2.4.0
     hooks:
     -   id: editorconfig-checker
         name: Check .editorconfig rules (Fortran)
         files: '.*(\.f|\.F|\.f90|\.F90)$'
         args: [-disable-indentation]
+
 -   repo: https://github.com/jorisroovers/gitlint
     rev: v0.17.0
     hooks:

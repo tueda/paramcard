@@ -5,3 +5,4 @@ strict-indent = True
 enable-decl = True
 enable-replacements = True
 c-relations = True
+disable-fypp = True  # otherwise, indentation for FORD comments easily break
