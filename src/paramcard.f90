@@ -392,7 +392,7 @@ contains
             read (tmp, *, iostat=iostat) variable
             if (iostat /= 0) then
                 write (error_unit, '(a)') '[ERROR] paramcard: failed to parse an integer value: '// &
-                    canon_name//' = '//tmp
+                    & canon_name//' = '//tmp
                 error stop
             end if
         else if (present(default_value)) then
@@ -437,7 +437,7 @@ contains
             read (tmp, *, iostat=iostat) variable
             if (iostat /= 0) then
                 write (error_unit, '(a)') '[ERROR] paramcard: failed to parse an integer value: '// &
-                    canon_name//' = '//tmp
+                    & canon_name//' = '//tmp
                 error stop
             end if
         else if (present(default_value)) then
@@ -482,7 +482,7 @@ contains
             read (tmp, *, iostat=iostat) variable
             if (iostat /= 0) then
                 write (error_unit, '(a)') '[ERROR] paramcard: failed to parse an integer value: '// &
-                    canon_name//' = '//tmp
+                    & canon_name//' = '//tmp
                 error stop
             end if
         else if (present(default_value)) then
@@ -527,7 +527,7 @@ contains
             read (tmp, *, iostat=iostat) variable
             if (iostat /= 0) then
                 write (error_unit, '(a)') '[ERROR] paramcard: failed to parse an integer value: '// &
-                    canon_name//' = '//tmp
+                    & canon_name//' = '//tmp
                 error stop
             end if
         else if (present(default_value)) then
@@ -572,7 +572,7 @@ contains
             read (tmp, *, iostat=iostat) variable
             if (iostat /= 0) then
                 write (error_unit, '(a)') '[ERROR] paramcard: failed to parse a real value: '// &
-                    canon_name//' = '//tmp
+                    & canon_name//' = '//tmp
                 error stop
             end if
         else if (present(default_value)) then
@@ -617,7 +617,7 @@ contains
             read (tmp, *, iostat=iostat) variable
             if (iostat /= 0) then
                 write (error_unit, '(a)') '[ERROR] paramcard: failed to parse a real value: '// &
-                    canon_name//' = '//tmp
+                   & canon_name//' = '//tmp
                 error stop
             end if
         else if (present(default_value)) then
@@ -695,7 +695,7 @@ contains
             if (show_default_) then
                 if (allocated(logs(i)%default_value)) then
                     write (unit_, '(a,a," = ",a," (default: ",a,")")') &
-                        prefix_, logs(i)%name, logs(i)%value, logs(i)%default_value
+                        & prefix_, logs(i)%name, logs(i)%value, logs(i)%default_value
                     cycle
                 end if
             end if
@@ -715,7 +715,7 @@ contains
                 do i = 1, n_params
                     if (.not. params(i)%consumed) then
                         write (error_unit, '("[ERROR]            ", a," = ",a)') &
-                            params(i)%name, params(i)%value
+                            & params(i)%name, params(i)%value
                     end if
                 end do
                 error stop
@@ -768,6 +768,8 @@ contains
         i = find_param(key_name)
         if (i >= 1) then
             variable = params(i)%value
+            ! We expect that after get_param_str_impl(), add_param() will be called.
+            ! The following is indeed ugly code, hard to understand, but works.
             params(i)%consumed = .true.
         end if
     end subroutine get_param_str_impl
@@ -844,7 +846,7 @@ contains
 
         if (i == 0) then
             write (error_unit, '(a)') '[ERROR] paramcard: not a parameter assignment: '// &
-                trim(adjustl(line))
+                & trim(adjustl(line))
             error stop
         end if
 
@@ -853,7 +855,7 @@ contains
 
         if (len(key) == 0) then
             write (error_unit, '(a)') '[ERROR] paramcard: empty parameter name: '// &
-                trim(adjustl(line))
+                & trim(adjustl(line))
             error stop
         end if
 
@@ -865,31 +867,11 @@ contains
         end if
     end subroutine parse_line
 
-    function find_param(name) result(res)
-        !! Find a parameter and return its index, or `-1` if not found.
-
-        character(len=*), intent(in) :: name
-            !! The parameter name.
-        integer :: res
-            !! The index of the found parameter.
-
-        integer :: i
-
-        do i = 1, n_params
-            if (name == params(i)%name) then
-                res = i
-                return
-            end if
-        end do
-
-        res = 0
-    end function find_param
-
     subroutine add_param(name, value)
         !! Add a parameter with the given name and value.
 
         character(len=*), intent(in) :: name
-            !! The parameter name.
+            !! The parameter name. All spaces removed, uppercase.
         character(len=*), intent(in) :: value
             !! The parameter value.
 
@@ -907,7 +889,28 @@ contains
         n_params = n_params + 1
         params(n_params)%name = name
         params(n_params)%value = value
+        params(n_params)%consumed = .false.
     end subroutine add_param
+
+    function find_param(name) result(res)
+        !! Find a parameter and return its index, or `0` if not found.
+
+        character(len=*), intent(in) :: name
+            !! The parameter name. All spaces removed, uppercase.
+        integer :: res
+            !! The index of the found parameter.
+
+        integer :: i
+
+        do i = 1, n_params
+            if (name == params(i)%name) then
+                res = i
+                return
+            end if
+        end do
+
+        res = 0
+    end function find_param
 
     subroutine add_log(name, value, default_value)
         !! Add a log item.
