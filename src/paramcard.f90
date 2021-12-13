@@ -243,6 +243,7 @@ module paramcard
     public :: get_param
     public :: write_param_summary
     public :: parse_param
+    public :: format_param
 
     interface get_param
         !! Retrieve a parameter.
@@ -742,6 +743,66 @@ contains
         end if
     end subroutine
 
+    function format_param(fmt) result(res)
+        !! Format parameter with the given format.
+
+        character(len=*), intent(in) :: fmt
+            !! The format to be used. Parameters are embedded as '{x}'.
+
+        character(len=:), allocatable :: res
+            !! The result.
+
+        character(len=:), allocatable :: result, canon_name, upper_name
+        integer :: i, j, start, end
+
+        result = ''
+
+        start = 0
+        do i = 1, len(fmt)
+            if (start == 0) then
+                if (fmt(i:i) == '{') then
+                    start = i + 1
+                else
+                    result = result//fmt(i:i)
+                end if
+            else
+                if (fmt(i:i) == '}') then
+                    end = i - 1
+                    if (start > end) then
+                        write (error_unit, '(a)') '[ERROR] paramcard: empty parameter name in fmt: '//fmt
+                        error stop
+                    end if
+                    canon_name = remove_spaces(fmt(start:end))
+                    if (len(canon_name) == 0) then
+                        write (error_unit, '(a)') '[ERROR] paramcard: empty parameter name in fmt: '//fmt
+                        error stop
+                    end if
+                    upper_name = to_upper(canon_name)
+                    j = find_log(upper_name)
+                    if (j >= 1) then
+                        result = result//logs(j)%value
+                    else
+                        j = find_param(upper_name)
+                        if (j == 0) then
+                            write (error_unit, '(a)') '[ERROR] paramcard: unknown parameter "' &
+                            & //canon_name//'" in fmt: '//fmt
+                            error stop
+                        end if
+                        if (.not. params(j)%consumed) then
+                            write (error_unit, '(a)') '[ERROR] paramcard: unused parameter "' &
+                            & //canon_name//'" in fmt: '//fmt
+                            error stop
+                        end if
+                        result = result//trim(params(j)%value)
+                    end if
+                    start = 0
+                end if
+            end if
+        end do
+
+        res = result
+    end function format_param
+
     subroutine get_param_str_impl(name, variable, canon_name)
         !! Retrieve a string parameter.
 
@@ -916,7 +977,7 @@ contains
         !! Add a log item.
 
         character(len=*), intent(in) :: name
-            !! The parameter name.
+            !! The parameter name. All spaces removed, but not necessarily uppercase.
         character(len=*), intent(in) :: value
             !! The parameter value.
         character(len=*), optional, intent(in) :: default_value
@@ -940,6 +1001,27 @@ contains
             logs(n_logs)%default_value = default_value
         end if
     end subroutine add_log
+
+    function find_log(name) result(res)
+        !! Find a log item and return its index, or `0` if not found.
+
+        character(len=*), intent(in) :: name
+            !! The parameter name. All spaces removed, uppercase.
+        integer :: res
+            !! The index of the found parameter.
+
+        integer :: i
+
+        ! In the reverse order.
+        do i = n_logs, 1, -1
+            if (name == to_upper(logs(i)%name)) then
+                res = i
+                return
+            end if
+        end do
+
+        res = 0
+    end function find_log
 
 end module paramcard
 
