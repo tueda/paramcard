@@ -618,7 +618,7 @@ contains
             read (tmp, *, iostat=iostat) variable
             if (iostat /= 0) then
                 write (error_unit, '(a)') '[ERROR] paramcard: failed to parse a real value: '// &
-                   & canon_name//' = '//tmp
+                    & canon_name//' = '//tmp
                 error stop
             end if
         else if (present(default_value)) then
@@ -785,12 +785,12 @@ contains
                         j = find_param(upper_name)
                         if (j == 0) then
                             write (error_unit, '(a)') '[ERROR] paramcard: unknown parameter "' &
-                            & //canon_name//'" in fmt: '//fmt
+                                & //canon_name//'" in fmt: '//fmt
                             error stop
                         end if
                         if (.not. params(j)%consumed) then
                             write (error_unit, '(a)') '[ERROR] paramcard: unused parameter "' &
-                            & //canon_name//'" in fmt: '//fmt
+                                & //canon_name//'" in fmt: '//fmt
                             error stop
                         end if
                         result = result//trim(params(j)%value)

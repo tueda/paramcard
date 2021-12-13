@@ -1,3 +1,14 @@
+#:mute
+
+#:set INT_KINDS = ["int8", "int16", "int32", "int64"]
+#:set INT_TYPES = ["integer(kind={})".format(k) for k in INT_KINDS]
+#:set INT_KINDS_TYPES = list(zip(INT_KINDS, INT_TYPES))
+
+#:set REAL_KINDS = ["real32", "real64"]
+#:set REAL_TYPES = ["real(kind={})".format(k) for k in REAL_KINDS]
+#:set REAL_KINDS_TYPES = list(zip(REAL_KINDS, REAL_TYPES))
+
+#:endmute
 module paramcard_util
     !! This module contains utility routines.
 
@@ -12,18 +23,16 @@ module paramcard_util
 
     interface is_close
         !! Return true if two values are close to each other.
-        module procedure is_close_real32
-        module procedure is_close_real64
+#:for k in REAL_KINDS
+        module procedure is_close_${k}$
+#:endfor
     end interface is_close
 
     interface to_str
         !! Return the string representation of the given value.
-        module procedure to_str_int8
-        module procedure to_str_int16
-        module procedure to_str_int32
-        module procedure to_str_int64
-        module procedure to_str_real32
-        module procedure to_str_real64
+#:for k in INT_KINDS + REAL_KINDS
+        module procedure to_str_${k}$
+#:endfor
     end interface to_str
 
     integer, parameter :: MAX_BUF = 50
@@ -31,21 +40,22 @@ module paramcard_util
 
 contains
 
-    pure function is_close_real32(a, b, rel_tol, abs_tol) result(res)
+#:for k, t in REAL_KINDS_TYPES
+    pure function is_close_${k}$ (a, b, rel_tol, abs_tol) result(res)
         !! Return true if `a` and `b` are close to each other.
 
-        real(kind=real32), intent(in) :: a
+        ${t}$, intent(in) :: a
             !! The first number.
-        real(kind=real32), intent(in) :: b
+        ${t}$, intent(in) :: b
             !! The second number.
-        real(kind=real32), optional, intent(in) :: rel_tol
+        ${t}$, optional, intent(in) :: rel_tol
             !! The relative tolerance.
-        real(kind=real32), optional, intent(in) :: abs_tol
+        ${t}$, optional, intent(in) :: abs_tol
             !! The absolute tolerance.
         logical :: res
             !! The result.
 
-        real(kind=real32) :: rtol, atol
+        ${t}$::rtol,atol
 
         if (present(rel_tol)) then
             rtol = abs(rel_tol)
@@ -60,39 +70,9 @@ contains
         end if
 
         res = abs(a - b) <= max(rtol * max(abs(a), abs(b)), atol)
-    end function is_close_real32
+    end function is_close_${k}$
 
-    pure function is_close_real64(a, b, rel_tol, abs_tol) result(res)
-        !! Return true if `a` and `b` are close to each other.
-
-        real(kind=real64), intent(in) :: a
-            !! The first number.
-        real(kind=real64), intent(in) :: b
-            !! The second number.
-        real(kind=real64), optional, intent(in) :: rel_tol
-            !! The relative tolerance.
-        real(kind=real64), optional, intent(in) :: abs_tol
-            !! The absolute tolerance.
-        logical :: res
-            !! The result.
-
-        real(kind=real64) :: rtol, atol
-
-        if (present(rel_tol)) then
-            rtol = abs(rel_tol)
-        else
-            rtol = DEFAULT_EPSILON_COEFF * epsilon(rtol)
-        end if
-
-        if (present(abs_tol)) then
-            atol = abs(abs_tol)
-        else
-            atol = 0
-        end if
-
-        res = abs(a - b) <= max(rtol * max(abs(a), abs(b)), atol)
-    end function is_close_real64
-
+#:endfor
     pure function remove_spaces(str) result(res)
         !! Remove whitespace in the given string.
 
@@ -124,10 +104,11 @@ contains
         end if
     end function remove_spaces
 
-    pure function to_str_int8(value) result(res)
+#:for k, t in INT_KINDS_TYPES + REAL_KINDS_TYPES
+    pure function to_str_${k}$ (value) result(res)
         !! Return the string representation of the given value.
 
-        integer(kind=int8), intent(in) :: value
+        ${t}$, intent(in) :: value
             !! The value.
         character(len=:), allocatable :: res
             !! The string representation.
@@ -136,78 +117,9 @@ contains
 
         write (tmp, *) value
         res = trim(adjustl(tmp))
-    end function to_str_int8
+    end function to_str_${k}$
 
-    pure function to_str_int16(value) result(res)
-        !! Return the string representation of the given value.
-
-        integer(kind=int16), intent(in) :: value
-            !! The value.
-        character(len=:), allocatable :: res
-            !! The string representation.
-
-        character(len=MAX_BUF) :: tmp
-
-        write (tmp, *) value
-        res = trim(adjustl(tmp))
-    end function to_str_int16
-
-    pure function to_str_int32(value) result(res)
-        !! Return the string representation of the given value.
-
-        integer(kind=int32), intent(in) :: value
-            !! The value.
-        character(len=:), allocatable :: res
-            !! The string representation.
-
-        character(len=MAX_BUF) :: tmp
-
-        write (tmp, *) value
-        res = trim(adjustl(tmp))
-    end function to_str_int32
-
-    pure function to_str_int64(value) result(res)
-        !! Return the string representation of the given value.
-
-        integer(kind=int64), intent(in) :: value
-            !! The value.
-        character(len=:), allocatable :: res
-            !! The string representation.
-
-        character(len=MAX_BUF) :: tmp
-
-        write (tmp, *) value
-        res = trim(adjustl(tmp))
-    end function to_str_int64
-
-    pure function to_str_real32(value) result(res)
-        !! Return the string representation of the given value.
-
-        real(kind=real32), intent(in) :: value
-            !! The value.
-        character(len=:), allocatable :: res
-            !! The string representation.
-
-        character(len=MAX_BUF) :: tmp
-
-        write (tmp, *) value
-        res = trim(adjustl(tmp))
-    end function to_str_real32
-
-    pure function to_str_real64(value) result(res)
-        !! Return the string representation of the given value.
-
-        real(kind=real64), intent(in) :: value
-            !! The value.
-        character(len=:), allocatable :: res
-            !! The string representation.
-
-        character(len=MAX_BUF) :: tmp
-
-        write (tmp, *) value
-        res = trim(adjustl(tmp))
-    end function to_str_real64
-
+#:endfor
     pure function to_upper(str) result(res)
         !! Convert a string into uppercase.
 
@@ -249,12 +161,9 @@ module paramcard
         !! Retrieve a parameter.
         module procedure get_param_str
         module procedure get_param_len_str
-        module procedure get_param_int8
-        module procedure get_param_int16
-        module procedure get_param_int32
-        module procedure get_param_int64
-        module procedure get_param_real32
-        module procedure get_param_real64
+#:for k in INT_KINDS + REAL_KINDS
+        module procedure get_param_${k}$
+#:endfor
     end interface get_param
 
     type param_type
@@ -367,197 +276,22 @@ contains
         call add_log(canon_name, trim(variable))
     end subroutine get_param_len_str
 
-    subroutine get_param_int8(name, variable, default_value)
+#:for k, t in INT_KINDS_TYPES + REAL_KINDS_TYPES
+    subroutine get_param_${k}$ (name, variable, default_value)
+#:if k.startswith("int")
         !! Retrieve an integer parameter.
-
-        character(len=*), intent(in) :: name
-            !! The name of the parameter.
-        integer(kind=int8), intent(out) :: variable
-            !! The variable to store the parameter value.
-        integer(kind=int8), intent(in), optional :: default_value
-            !! The value to be used if the parameter not found.
-
-        integer(kind=int8) :: default_value_
-        character(len=:), allocatable :: tmp, canon_name
-        integer :: iostat
-
-        ! Copy the default value to allow the case that `variable` and `default_value`
-        ! point to the same memory location.
-        if (present(default_value)) then
-            default_value_ = default_value
-        end if
-
-        call get_param_str_impl(name, tmp, canon_name)
-
-        if (allocated(tmp)) then
-            read (tmp, *, iostat=iostat) variable
-            if (iostat /= 0) then
-                write (error_unit, '(a)') '[ERROR] paramcard: failed to parse an integer value: '// &
-                    & canon_name//' = '//tmp
-                error stop
-            end if
-        else if (present(default_value)) then
-            variable = default_value_
-        else
-            write (error_unit, '(a)') '[ERROR] paramcard: integer parameter undefined: '//canon_name
-            error stop
-        end if
-
-        if (present(default_value)) then
-            if (variable /= default_value_) then
-                call add_log(canon_name, to_str(variable), to_str(default_value_))
-                return
-            end if
-        end if
-        call add_log(canon_name, to_str(variable))
-    end subroutine get_param_int8
-
-    subroutine get_param_int16(name, variable, default_value)
-        !! Retrieve an integer parameter.
-
-        character(len=*), intent(in) :: name
-            !! The name of the parameter.
-        integer(kind=int16), intent(out) :: variable
-            !! The variable to store the parameter value.
-        integer(kind=int16), intent(in), optional :: default_value
-            !! The value to be used if the parameter not found.
-
-        integer(kind=int16) :: default_value_
-        character(len=:), allocatable :: tmp, canon_name
-        integer :: iostat
-
-        ! Copy the default value to allow the case that `variable` and `default_value`
-        ! point to the same memory location.
-        if (present(default_value)) then
-            default_value_ = default_value
-        end if
-
-        call get_param_str_impl(name, tmp, canon_name)
-
-        if (allocated(tmp)) then
-            read (tmp, *, iostat=iostat) variable
-            if (iostat /= 0) then
-                write (error_unit, '(a)') '[ERROR] paramcard: failed to parse an integer value: '// &
-                    & canon_name//' = '//tmp
-                error stop
-            end if
-        else if (present(default_value)) then
-            variable = default_value_
-        else
-            write (error_unit, '(a)') '[ERROR] paramcard: integer parameter undefined: '//canon_name
-            error stop
-        end if
-
-        if (present(default_value)) then
-            if (variable /= default_value_) then
-                call add_log(canon_name, to_str(variable), to_str(default_value_))
-                return
-            end if
-        end if
-        call add_log(canon_name, to_str(variable))
-    end subroutine get_param_int16
-
-    subroutine get_param_int32(name, variable, default_value)
-        !! Retrieve an integer parameter.
-
-        character(len=*), intent(in) :: name
-            !! The name of the parameter.
-        integer(kind=int32), intent(out) :: variable
-            !! The variable to store the parameter value.
-        integer(kind=int32), intent(in), optional :: default_value
-            !! The value to be used if the parameter not found.
-
-        integer(kind=int32) :: default_value_
-        character(len=:), allocatable :: tmp, canon_name
-        integer :: iostat
-
-        ! Copy the default value to allow the case that `variable` and `default_value`
-        ! point to the same memory location.
-        if (present(default_value)) then
-            default_value_ = default_value
-        end if
-
-        call get_param_str_impl(name, tmp, canon_name)
-
-        if (allocated(tmp)) then
-            read (tmp, *, iostat=iostat) variable
-            if (iostat /= 0) then
-                write (error_unit, '(a)') '[ERROR] paramcard: failed to parse an integer value: '// &
-                    & canon_name//' = '//tmp
-                error stop
-            end if
-        else if (present(default_value)) then
-            variable = default_value_
-        else
-            write (error_unit, '(a)') '[ERROR] paramcard: integer parameter undefined: '//canon_name
-            error stop
-        end if
-
-        if (present(default_value)) then
-            if (variable /= default_value_) then
-                call add_log(canon_name, to_str(variable), to_str(default_value_))
-                return
-            end if
-        end if
-        call add_log(canon_name, to_str(variable))
-    end subroutine get_param_int32
-
-    subroutine get_param_int64(name, variable, default_value)
-        !! Retrieve an integer parameter.
-
-        character(len=*), intent(in) :: name
-            !! The name of the parameter.
-        integer(kind=int64), intent(out) :: variable
-            !! The variable to store the parameter value.
-        integer(kind=int64), intent(in), optional :: default_value
-            !! The value to be used if the parameter not found.
-
-        integer(kind=int64) :: default_value_
-        character(len=:), allocatable :: tmp, canon_name
-        integer :: iostat
-
-        ! Copy the default value to allow the case that `variable` and `default_value`
-        ! point to the same memory location.
-        if (present(default_value)) then
-            default_value_ = default_value
-        end if
-
-        call get_param_str_impl(name, tmp, canon_name)
-
-        if (allocated(tmp)) then
-            read (tmp, *, iostat=iostat) variable
-            if (iostat /= 0) then
-                write (error_unit, '(a)') '[ERROR] paramcard: failed to parse an integer value: '// &
-                    & canon_name//' = '//tmp
-                error stop
-            end if
-        else if (present(default_value)) then
-            variable = default_value_
-        else
-            write (error_unit, '(a)') '[ERROR] paramcard: integer parameter undefined: '//canon_name
-            error stop
-        end if
-
-        if (present(default_value)) then
-            if (variable /= default_value_) then
-                call add_log(canon_name, to_str(variable), to_str(default_value_))
-                return
-            end if
-        end if
-        call add_log(canon_name, to_str(variable))
-    end subroutine get_param_int64
-
-    subroutine get_param_real32(name, variable, default_value)
+#:else
         !! Retrieve a real parameter.
+#:endif
 
         character(len=*), intent(in) :: name
             !! The name of the parameter.
-        real(kind=real32), intent(out) :: variable
+        ${t}$, intent(out) :: variable
             !! The variable to store the parameter value.
-        real(kind=real32), intent(in), optional :: default_value
+        ${t}$, intent(in), optional :: default_value
             !! The value to be used if the parameter not found.
 
-        real(kind=real32) :: default_value_
+        ${t}$::default_value_
         character(len=:), allocatable :: tmp, canon_name
         integer :: iostat
 
@@ -572,71 +306,43 @@ contains
         if (allocated(tmp)) then
             read (tmp, *, iostat=iostat) variable
             if (iostat /= 0) then
+#:if k.startswith("int")
+                write (error_unit, '(a)') '[ERROR] paramcard: failed to parse an integer value: '// &
+                    & canon_name//' = '//tmp
+#:else
                 write (error_unit, '(a)') '[ERROR] paramcard: failed to parse a real value: '// &
                     & canon_name//' = '//tmp
+#:endif
                 error stop
             end if
         else if (present(default_value)) then
             variable = default_value_
         else
+#:if k.startswith("int")
+            write (error_unit, '(a)') '[ERROR] paramcard: integer parameter undefined: '//canon_name
+#:else
             write (error_unit, '(a)') '[ERROR] paramcard: real parameter undefined: '//canon_name
+#:endif
             error stop
         end if
 
         if (present(default_value)) then
+#:if k.startswith("real")
             if (.not. is_close(variable, default_value_)) then
                 call add_log(canon_name, to_str(variable), to_str(default_value_))
                 return
             end if
-        end if
-        call add_log(canon_name, to_str(variable))
-    end subroutine get_param_real32
-
-    subroutine get_param_real64(name, variable, default_value)
-        !! Retrieve a real parameter.
-
-        character(len=*), intent(in) :: name
-            !! The name of the parameter.
-        real(kind=real64), intent(out) :: variable
-            !! The variable to store the parameter value.
-        real(kind=real64), intent(in), optional :: default_value
-            !! The value to be used if the parameter not found.
-
-        real(kind=real64) :: default_value_
-        character(len=:), allocatable :: tmp, canon_name
-        integer :: iostat
-
-        ! Copy the default value to allow the case that `variable` and `default_value`
-        ! point to the same memory location.
-        if (present(default_value)) then
-            default_value_ = default_value
-        end if
-
-        call get_param_str_impl(name, tmp, canon_name)
-
-        if (allocated(tmp)) then
-            read (tmp, *, iostat=iostat) variable
-            if (iostat /= 0) then
-                write (error_unit, '(a)') '[ERROR] paramcard: failed to parse a real value: '// &
-                   & canon_name//' = '//tmp
-                error stop
-            end if
-        else if (present(default_value)) then
-            variable = default_value_
-        else
-            write (error_unit, '(a)') '[ERROR] paramcard: real parameter undefined: '//canon_name
-            error stop
-        end if
-
-        if (present(default_value)) then
-            if (.not. is_close(variable, default_value_)) then
+#:else
+            if (variable /= default_value_) then
                 call add_log(canon_name, to_str(variable), to_str(default_value_))
                 return
             end if
+#:endif
         end if
         call add_log(canon_name, to_str(variable))
-    end subroutine get_param_real64
+    end subroutine get_param_${k}$
 
+#:endfor
     subroutine write_param_summary(unit, only_changed, show_default, check_unused, prefix)
         !! Write the parameter summary.
 
@@ -785,12 +491,12 @@ contains
                         j = find_param(upper_name)
                         if (j == 0) then
                             write (error_unit, '(a)') '[ERROR] paramcard: unknown parameter "' &
-                            & //canon_name//'" in fmt: '//fmt
+                                & //canon_name//'" in fmt: '//fmt
                             error stop
                         end if
                         if (.not. params(j)%consumed) then
                             write (error_unit, '(a)') '[ERROR] paramcard: unused parameter "' &
-                            & //canon_name//'" in fmt: '//fmt
+                                & //canon_name//'" in fmt: '//fmt
                             error stop
                         end if
                         result = result//trim(params(j)%value)
