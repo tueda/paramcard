@@ -17,10 +17,22 @@ import re
 import shutil
 import subprocess
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
+LIBRARY_FILES = ("paramcard.fypp",)
+LICENSE_FILE = "LICENSE"
 INCLUDE_PATHS = ("src",)
 INCLUDE_FILES = ("common.fypp",)
+PROJECT_URL = "https://github.com/tueda/paramcard"
+
+
+def file_header(path: Path) -> str:
+    """Return the file header."""
+    lines = [f"@file {path.name}", "", f"See: {PROJECT_URL}"]
+    lines += Path(LICENSE_FILE).read_text().splitlines()
+    lines[3] = "Licensed under the " + lines[3] + "."
+    lines = [("! " + line).rstrip() for line in lines]
+    return "\n".join(lines) + "\n\n"
 
 
 def guess_file(path: Path) -> str:
@@ -114,6 +126,9 @@ def main() -> None:
             subprocess.run([fprettify_bin, output_path], check=True)
 
         new_output = output_path.read_text()
+        if source_path.name in LIBRARY_FILES:
+            new_output = file_header(output_path) + new_output
+            output_path.write_text(new_output)
         if old_output != new_output:
             print(f"{source_path} -> {output_path}")
             nchanged += 1
