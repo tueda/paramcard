@@ -27,6 +27,14 @@ repos:
         -   fprettify==0.3.7
         -   fypp==3.1
 
+-   repo: local
+    hooks:
+    -   id: flint
+        name: Run Fortran linter
+        entry: python3 scripts/flint.py
+        language: python
+        files: '\.f|\.F|\.f90|\.F90|\.fypp$'
+
 -   repo: https://github.com/pseewald/fprettify
     rev: v0.3.7
     hooks:
