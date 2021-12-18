@@ -1,9 +1,9 @@
 #:mute
 
-#:set INT_KINDS = ["int8", "int16", "int32", "int64"]
-#:set REAL_KINDS = ["real32", "real64"]
-#:set TYPE_DICT = [(k, "integer(kind={})".format(k)) for k in INT_KINDS]
-#:set TYPE_DICT = TYPE_DICT + [(k, "real(kind={})".format(k)) for k in REAL_KINDS]
+#:set INT_KINDS = ['int8', 'int16', 'int32', 'int64']
+#:set REAL_KINDS = ['real32', 'real64']
+#:set TYPE_DICT = [(k, 'integer(kind={})'.format(k)) for k in INT_KINDS]
+#:set TYPE_DICT = TYPE_DICT + [(k, 'real(kind={})'.format(k)) for k in REAL_KINDS]
 #:set TYPE_DICT = dict(TYPE_DICT)
 #:set type = lambda k: TYPE_DICT[k]
 
@@ -24,13 +24,13 @@ contains
 
         testsuite = [ &
 #:for k in REAL_KINDS
-                    new_unittest("is_close_${k}$", test_is_close_${k}$), &
+                    new_unittest('is_close_${k}$', test_is_close_${k}$), &
 #:endfor
-                    new_unittest("remove_spaces", test_remove_spaces), &
+                    new_unittest('remove_spaces', test_remove_spaces), &
 #:for k in INT_KINDS + REAL_KINDS
-                    new_unittest("to_str_${k}$", test_to_str_${k}$), &
+                    new_unittest('to_str_${k}$', test_to_str_${k}$), &
 #:endfor
-                    new_unittest("to_upper", test_to_upper) &
+                    new_unittest('to_upper', test_to_upper) &
                     ]
     end subroutine collect_test_util
 
@@ -109,16 +109,16 @@ program tester
     stat = 0
 
     testsuites = [ &
-                 new_testsuite("util", collect_test_util) &
+                 new_testsuite('util', collect_test_util) &
                  ]
 
     do is = 1, size(testsuites)
-        write (error_unit, fmt) "Testing:", testsuites(is)%name
+        write (error_unit, fmt) 'Testing:', testsuites(is)%name
         call run_testsuite(testsuites(is)%collect, error_unit, stat)
     end do
 
     if (stat > 0) then
-        write (error_unit, '(i0, 1x, a)') stat, "test(s) failed!"
+        write (error_unit, '(i0, 1x, a)') stat, 'test(s) failed!'
         error stop
     end if
 end program tester

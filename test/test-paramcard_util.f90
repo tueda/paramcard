@@ -13,16 +13,16 @@ contains
         type(unittest_type), allocatable, intent(out) :: testsuite(:)
 
         testsuite = [ &
-                    new_unittest("is_close_real32", test_is_close_real32), &
-                    new_unittest("is_close_real64", test_is_close_real64), &
-                    new_unittest("remove_spaces", test_remove_spaces), &
-                    new_unittest("to_str_int8", test_to_str_int8), &
-                    new_unittest("to_str_int16", test_to_str_int16), &
-                    new_unittest("to_str_int32", test_to_str_int32), &
-                    new_unittest("to_str_int64", test_to_str_int64), &
-                    new_unittest("to_str_real32", test_to_str_real32), &
-                    new_unittest("to_str_real64", test_to_str_real64), &
-                    new_unittest("to_upper", test_to_upper) &
+                    new_unittest('is_close_real32', test_is_close_real32), &
+                    new_unittest('is_close_real64', test_is_close_real64), &
+                    new_unittest('remove_spaces', test_remove_spaces), &
+                    new_unittest('to_str_int8', test_to_str_int8), &
+                    new_unittest('to_str_int16', test_to_str_int16), &
+                    new_unittest('to_str_int32', test_to_str_int32), &
+                    new_unittest('to_str_int64', test_to_str_int64), &
+                    new_unittest('to_str_real32', test_to_str_real32), &
+                    new_unittest('to_str_real64', test_to_str_real64), &
+                    new_unittest('to_upper', test_to_upper) &
                     ]
     end subroutine collect_test_util
 
@@ -183,16 +183,16 @@ program tester
     stat = 0
 
     testsuites = [ &
-                 new_testsuite("util", collect_test_util) &
+                 new_testsuite('util', collect_test_util) &
                  ]
 
     do is = 1, size(testsuites)
-        write (error_unit, fmt) "Testing:", testsuites(is)%name
+        write (error_unit, fmt) 'Testing:', testsuites(is)%name
         call run_testsuite(testsuites(is)%collect, error_unit, stat)
     end do
 
     if (stat > 0) then
-        write (error_unit, '(i0, 1x, a)') stat, "test(s) failed!"
+        write (error_unit, '(i0, 1x, a)') stat, 'test(s) failed!'
         error stop
     end if
 end program tester

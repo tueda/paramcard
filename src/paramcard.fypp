@@ -1,11 +1,11 @@
 #:mute
 
-#:set INT_KINDS = ["int8", "int16", "int32", "int64"]
-#:set INT_TYPES = ["integer(kind={})".format(k) for k in INT_KINDS]
+#:set INT_KINDS = ['int8', 'int16', 'int32', 'int64']
+#:set INT_TYPES = ['integer(kind={})'.format(k) for k in INT_KINDS]
 #:set INT_KINDS_TYPES = list(zip(INT_KINDS, INT_TYPES))
 
-#:set REAL_KINDS = ["real32", "real64"]
-#:set REAL_TYPES = ["real(kind={})".format(k) for k in REAL_KINDS]
+#:set REAL_KINDS = ['real32', 'real64']
+#:set REAL_TYPES = ['real(kind={})'.format(k) for k in REAL_KINDS]
 #:set REAL_KINDS_TYPES = list(zip(REAL_KINDS, REAL_TYPES))
 
 #:endmute
@@ -278,7 +278,7 @@ contains
 
 #:for k, t in INT_KINDS_TYPES + REAL_KINDS_TYPES
     subroutine get_param_${k}$ (name, variable, default_value)
-#:if k.startswith("int")
+#:if k.startswith('int')
         !! Retrieve an integer parameter.
 #:else
         !! Retrieve a real parameter.
@@ -306,7 +306,7 @@ contains
         if (allocated(tmp)) then
             read (tmp, *, iostat=iostat) variable
             if (iostat /= 0) then
-#:if k.startswith("int")
+#:if k.startswith('int')
                 write (error_unit, '(a)') '[ERROR] paramcard: failed to parse an integer value: '// &
                     & canon_name//' = '//tmp
 #:else
@@ -318,7 +318,7 @@ contains
         else if (present(default_value)) then
             variable = default_value_
         else
-#:if k.startswith("int")
+#:if k.startswith('int')
             write (error_unit, '(a)') '[ERROR] paramcard: integer parameter undefined: '//canon_name
 #:else
             write (error_unit, '(a)') '[ERROR] paramcard: real parameter undefined: '//canon_name
@@ -327,7 +327,7 @@ contains
         end if
 
         if (present(default_value)) then
-#:if k.startswith("real")
+#:if k.startswith('real')
             if (.not. is_close(variable, default_value_)) then
                 call add_log(canon_name, to_str(variable), to_str(default_value_))
                 return
