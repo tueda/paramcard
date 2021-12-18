@@ -12,12 +12,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # NOTE: gfortran 9.3 (the default on ubuntu-20.04) has a bug with -coverage:
+          #   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95847.
+          # Instead, we use gfortran 10.3 on ubuntu-20.04 for code coverage.
           - { os: ubuntu-18.04, fc: gfortran-5  }
           - { os: ubuntu-18.04, fc: gfortran-6  }
           - { os: ubuntu-18.04, fc: gfortran-7  }
           - { os: ubuntu-20.04, fc: gfortran-8  }
           - { os: ubuntu-20.04, fc: gfortran-9  }
-          - { os: ubuntu-20.04, fc: gfortran-10 }
+          - { os: ubuntu-20.04, fc: gfortran-10, build-type: coverage }
           - { os: macos-11,     fc: gfortran-11 }
 
     runs-on: ${{ matrix.os }}
@@ -32,21 +35,39 @@ jobs:
 
       - name: Install dependencies (apt)
         if: >-
-          (matrix.os == 'ubuntu-18.04' && (
-            matrix.fc == 'gfortran-4.8' ||
-            matrix.fc == 'gfortran-5' ||
-            matrix.fc == 'gfortran-6' ||
-            matrix.fc == 'gfortran-8' ||
-            matrix.fc == 'gfortran-11')) ||
-          (matrix.os == 'ubuntu-20.04' && (
-            matrix.fc == 'gfortran-7' ||
-            matrix.fc == 'gfortran-8' ||
-            matrix.fc == 'gfortran-11'))
+          ${{ (matrix.os == 'ubuntu-18.04' && (
+                matrix.fc == 'gfortran-4.8' ||
+                matrix.fc == 'gfortran-5' ||
+                matrix.fc == 'gfortran-6' ||
+                matrix.fc == 'gfortran-8' ||
+                matrix.fc == 'gfortran-11')) ||
+              (matrix.os == 'ubuntu-20.04' && (
+                matrix.fc == 'gfortran-7' ||
+                matrix.fc == 'gfortran-8' ||
+                matrix.fc == 'gfortran-11')) }}
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq ${{ matrix.fc }}
 
       - name: Run test
+        if: matrix.build-type != 'coverage'
         run: fpm test
         env:
           FPM_FC: ${{ matrix.fc }}
+
+      - name: Run test (with coverage)
+        if: matrix.build-type == 'coverage'
+        run: fpm test
+        env:
+          FPM_FC: ${{ matrix.fc }}
+          FPM_FFLAGS: -coverage
+
+      - name: Run gcov
+        if: matrix.build-type == 'coverage'
+        run: find . -type f -name '*.gcno' -exec gcov-10 -pb {} +  # with gfortran-10
+
+      - name: Upload coverage report
+        if: matrix.build-type == 'coverage'
+        uses: codecov/codecov-action@v2
+        with:
+          fail_ci_if_error: true
