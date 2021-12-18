@@ -1,4 +1,5 @@
 module test_util
+    use, intrinsic :: iso_fortran_env, only: int8, int16, int32, int64, real32, real64
     use testdrive, only: new_unittest, unittest_type, error_type, check
     use paramcard_util
     implicit none
@@ -12,39 +13,154 @@ contains
         type(unittest_type), allocatable, intent(out) :: testsuite(:)
 
         testsuite = [ &
-                    new_unittest("is_close", test_is_close), &
+                    new_unittest("is_close_real32", test_is_close_real32), &
+                    new_unittest("is_close_real64", test_is_close_real64), &
                     new_unittest("remove_spaces", test_remove_spaces), &
-                    new_unittest("to_str", test_to_str), &
+                    new_unittest("to_str_int8", test_to_str_int8), &
+                    new_unittest("to_str_int16", test_to_str_int16), &
+                    new_unittest("to_str_int32", test_to_str_int32), &
+                    new_unittest("to_str_int64", test_to_str_int64), &
+                    new_unittest("to_str_real32", test_to_str_real32), &
+                    new_unittest("to_str_real64", test_to_str_real64), &
                     new_unittest("to_upper", test_to_upper) &
                     ]
     end subroutine collect_test_util
 
-    subroutine test_is_close(error)
+    subroutine test_is_close_real32(error)
         type(error_type), allocatable, intent(out) :: error
 
-        call check(error,.not. is_close(1.000e0, 1.001e0))
+        call check(error,.not. is_close(1.0_real32, 1.001_real32))
         if (allocated(error)) return
 
-        call check(error,.not. is_close(1.000d0, 1.001d0))
+        call check(error, is_close(1.000_real32, 1.001_real32, 0.1_real32))
         if (allocated(error)) return
-    end subroutine test_is_close
+
+        call check(error, is_close(1.000_real32, 1.001_real32, 0.0_real32, 0.1_real32))
+        if (allocated(error)) return
+    end subroutine test_is_close_real32
+
+    subroutine test_is_close_real64(error)
+        type(error_type), allocatable, intent(out) :: error
+
+        call check(error,.not. is_close(1.0_real64, 1.001_real64))
+        if (allocated(error)) return
+
+        call check(error, is_close(1.000_real64, 1.001_real64, 0.1_real64))
+        if (allocated(error)) return
+
+        call check(error, is_close(1.000_real64, 1.001_real64, 0.0_real64, 0.1_real64))
+        if (allocated(error)) return
+    end subroutine test_is_close_real64
 
     subroutine test_remove_spaces(error)
         type(error_type), allocatable, intent(out) :: error
 
         call check(error, remove_spaces(' a b  cd e  ') == 'abcde')
         if (allocated(error)) return
+
+        call check(error, remove_spaces('     ') == '')
+        if (allocated(error)) return
     end subroutine test_remove_spaces
 
-    subroutine test_to_str(error)
+    subroutine test_to_str_int8(error)
         type(error_type), allocatable, intent(out) :: error
 
-        call check(error, to_str(12345) == '12345')
+        character(len=:), allocatable :: s
+        integer(kind=int8) :: x, y
+
+        x = 123_int8
+        s = to_str(x)
+        call check(error, s == '123')
         if (allocated(error)) return
 
-        call check(error, remove_spaces(to_str(-12345)) == '-12345')
+        x = -123_int8
+        s = to_str(x)
+        read (s, *) y
+        call check(error, x == y)
         if (allocated(error)) return
-    end subroutine test_to_str
+    end subroutine test_to_str_int8
+
+    subroutine test_to_str_int16(error)
+        type(error_type), allocatable, intent(out) :: error
+
+        character(len=:), allocatable :: s
+        integer(kind=int16) :: x, y
+
+        x = 123_int16
+        s = to_str(x)
+        call check(error, s == '123')
+        if (allocated(error)) return
+
+        x = -123_int16
+        s = to_str(x)
+        read (s, *) y
+        call check(error, x == y)
+        if (allocated(error)) return
+    end subroutine test_to_str_int16
+
+    subroutine test_to_str_int32(error)
+        type(error_type), allocatable, intent(out) :: error
+
+        character(len=:), allocatable :: s
+        integer(kind=int32) :: x, y
+
+        x = 123_int32
+        s = to_str(x)
+        call check(error, s == '123')
+        if (allocated(error)) return
+
+        x = -123_int32
+        s = to_str(x)
+        read (s, *) y
+        call check(error, x == y)
+        if (allocated(error)) return
+    end subroutine test_to_str_int32
+
+    subroutine test_to_str_int64(error)
+        type(error_type), allocatable, intent(out) :: error
+
+        character(len=:), allocatable :: s
+        integer(kind=int64) :: x, y
+
+        x = 123_int64
+        s = to_str(x)
+        call check(error, s == '123')
+        if (allocated(error)) return
+
+        x = -123_int64
+        s = to_str(x)
+        read (s, *) y
+        call check(error, x == y)
+        if (allocated(error)) return
+    end subroutine test_to_str_int64
+
+    subroutine test_to_str_real32(error)
+        type(error_type), allocatable, intent(out) :: error
+
+        character(len=:), allocatable :: s
+        real(kind=real32) :: x, y
+
+        x = 3
+        x = 1 / x
+        s = to_str(x)
+        read (s, *) y
+        call check(error, is_close(x, y))
+        if (allocated(error)) return
+    end subroutine test_to_str_real32
+
+    subroutine test_to_str_real64(error)
+        type(error_type), allocatable, intent(out) :: error
+
+        character(len=:), allocatable :: s
+        real(kind=real64) :: x, y
+
+        x = 3
+        x = 1 / x
+        s = to_str(x)
+        read (s, *) y
+        call check(error, is_close(x, y))
+        if (allocated(error)) return
+    end subroutine test_to_str_real64
 
     subroutine test_to_upper(error)
         type(error_type), allocatable, intent(out) :: error
