@@ -19,6 +19,9 @@ import subprocess
 from pathlib import Path
 from typing import Optional
 
+INCLUDE_PATHS = ("src",)
+INCLUDE_FILES = ("common.fypp",)
+
 
 def guess_file(path: Path) -> str:
     """Guess the type of a file and return the corresponding file extension."""
@@ -85,6 +88,11 @@ def main() -> None:
     if not fypp_bin:
         raise RuntimeError("fypp not found")
 
+    fypp_opts = []
+    for f in INCLUDE_PATHS:
+        if Path(f).is_dir():
+            fypp_opts += ["-I", f]
+
     fprettify_bin = shutil.which("fprettify")
     if not fprettify_bin:
         raise RuntimeError("fprettify not found")
@@ -92,13 +100,16 @@ def main() -> None:
     nchanged = 0
 
     for source_path in source_files:
+        if source_path.name in INCLUDE_FILES:
+            continue
+
         output_path = source_path.with_suffix(guess_file(source_path))
         if output_path.exists():
             old_output: Optional[str] = output_path.read_text()
         else:
             old_output = None
 
-        subprocess.run([fypp_bin, source_path, output_path], check=True)
+        subprocess.run([fypp_bin, *fypp_opts, source_path, output_path], check=True)
         if output_path.suffix == ".f90":
             subprocess.run([fprettify_bin, output_path], check=True)
 

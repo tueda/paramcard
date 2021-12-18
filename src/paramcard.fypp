@@ -1,14 +1,4 @@
-#:mute
-
-#:set INT_KINDS = ['int8', 'int16', 'int32', 'int64']
-#:set INT_TYPES = ['integer(kind={})'.format(k) for k in INT_KINDS]
-#:set INT_KINDS_TYPES = list(zip(INT_KINDS, INT_TYPES))
-
-#:set REAL_KINDS = ['real32', 'real64']
-#:set REAL_TYPES = ['real(kind={})'.format(k) for k in REAL_KINDS]
-#:set REAL_KINDS_TYPES = list(zip(REAL_KINDS, REAL_TYPES))
-
-#:endmute
+#:include 'common.fypp'
 module paramcard_util
     !! This module contains utility routines.
 
@@ -40,22 +30,22 @@ module paramcard_util
 
 contains
 
-#:for k, t in REAL_KINDS_TYPES
+#:for k in REAL_KINDS
     pure function is_close_${k}$ (a, b, rel_tol, abs_tol) result(res)
         !! Return true if `a` and `b` are close to each other.
 
-        ${t}$, intent(in) :: a
+        ${type(k)}$, intent(in) :: a
             !! The first number.
-        ${t}$, intent(in) :: b
+        ${type(k)}$, intent(in) :: b
             !! The second number.
-        ${t}$, optional, intent(in) :: rel_tol
+        ${type(k)}$, optional, intent(in) :: rel_tol
             !! The relative tolerance.
-        ${t}$, optional, intent(in) :: abs_tol
+        ${type(k)}$, optional, intent(in) :: abs_tol
             !! The absolute tolerance.
         logical :: res
             !! The result.
 
-        ${t}$::rtol,atol
+        ${type(k)}$::rtol,atol
 
         if (present(rel_tol)) then
             rtol = abs(rel_tol)
@@ -104,11 +94,11 @@ contains
         end if
     end function remove_spaces
 
-#:for k, t in INT_KINDS_TYPES + REAL_KINDS_TYPES
+#:for k in INT_KINDS + REAL_KINDS
     pure function to_str_${k}$ (value) result(res)
         !! Return the string representation of the given value.
 
-        ${t}$, intent(in) :: value
+        ${type(k)}$, intent(in) :: value
             !! The value.
         character(len=:), allocatable :: res
             !! The string representation.
@@ -276,7 +266,7 @@ contains
         call add_log(canon_name, trim(variable))
     end subroutine get_param_len_str
 
-#:for k, t in INT_KINDS_TYPES + REAL_KINDS_TYPES
+#:for k in INT_KINDS + REAL_KINDS
     subroutine get_param_${k}$ (name, variable, default_value)
 #:if k.startswith('int')
         !! Retrieve an integer parameter.
@@ -286,12 +276,12 @@ contains
 
         character(len=*), intent(in) :: name
             !! The name of the parameter.
-        ${t}$, intent(out) :: variable
+        ${type(k)}$, intent(out) :: variable
             !! The variable to store the parameter value.
-        ${t}$, intent(in), optional :: default_value
+        ${type(k)}$, intent(in), optional :: default_value
             !! The value to be used if the parameter not found.
 
-        ${t}$::default_value_
+        ${type(k)}$::default_value_
         character(len=:), allocatable :: tmp, canon_name
         integer :: iostat
 
