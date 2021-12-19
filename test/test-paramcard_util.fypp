@@ -43,10 +43,10 @@ contains
     subroutine test_remove_spaces(error)
         type(error_type), allocatable, intent(out) :: error
 
-        call check(error, remove_spaces(' a b  cd e  ') == 'abcde')
+        call check(error, remove_spaces(' a b  cd e  '), 'abcde')
         if (allocated(error)) return
 
-        call check(error, remove_spaces('     ') == '')
+        call check(error, remove_spaces('     '), '')
         if (allocated(error)) return
     end subroutine test_remove_spaces
 
@@ -60,13 +60,13 @@ contains
 #:if k in INT_KINDS
         x = 123_${k}$
         s = to_str(x)
-        call check(error, s == '123')
+        call check(error, s, '123')
         if (allocated(error)) return
 
         x = -123_${k}$
         s = to_str(x)
         read (s, *) y
-        call check(error, x == y)
+        call check(error, x, y)
         if (allocated(error)) return
 #:else
         x = 3
@@ -82,7 +82,7 @@ contains
     subroutine test_to_upper(error)
         type(error_type), allocatable, intent(out) :: error
 
-        call check(error, to_upper('abC1@') == 'ABC1@')
+        call check(error, to_upper('abC1@'), 'ABC1@')
         if (allocated(error)) return
     end subroutine test_to_upper
 

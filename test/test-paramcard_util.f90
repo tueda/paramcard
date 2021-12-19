@@ -55,10 +55,10 @@ contains
     subroutine test_remove_spaces(error)
         type(error_type), allocatable, intent(out) :: error
 
-        call check(error, remove_spaces(' a b  cd e  ') == 'abcde')
+        call check(error, remove_spaces(' a b  cd e  '), 'abcde')
         if (allocated(error)) return
 
-        call check(error, remove_spaces('     ') == '')
+        call check(error, remove_spaces('     '), '')
         if (allocated(error)) return
     end subroutine test_remove_spaces
 
@@ -70,13 +70,13 @@ contains
 
         x = 123_int8
         s = to_str(x)
-        call check(error, s == '123')
+        call check(error, s, '123')
         if (allocated(error)) return
 
         x = -123_int8
         s = to_str(x)
         read (s, *) y
-        call check(error, x == y)
+        call check(error, x, y)
         if (allocated(error)) return
     end subroutine test_to_str_int8
 
@@ -88,13 +88,13 @@ contains
 
         x = 123_int16
         s = to_str(x)
-        call check(error, s == '123')
+        call check(error, s, '123')
         if (allocated(error)) return
 
         x = -123_int16
         s = to_str(x)
         read (s, *) y
-        call check(error, x == y)
+        call check(error, x, y)
         if (allocated(error)) return
     end subroutine test_to_str_int16
 
@@ -106,13 +106,13 @@ contains
 
         x = 123_int32
         s = to_str(x)
-        call check(error, s == '123')
+        call check(error, s, '123')
         if (allocated(error)) return
 
         x = -123_int32
         s = to_str(x)
         read (s, *) y
-        call check(error, x == y)
+        call check(error, x, y)
         if (allocated(error)) return
     end subroutine test_to_str_int32
 
@@ -124,13 +124,13 @@ contains
 
         x = 123_int64
         s = to_str(x)
-        call check(error, s == '123')
+        call check(error, s, '123')
         if (allocated(error)) return
 
         x = -123_int64
         s = to_str(x)
         read (s, *) y
-        call check(error, x == y)
+        call check(error, x, y)
         if (allocated(error)) return
     end subroutine test_to_str_int64
 
@@ -165,7 +165,7 @@ contains
     subroutine test_to_upper(error)
         type(error_type), allocatable, intent(out) :: error
 
-        call check(error, to_upper('abC1@') == 'ABC1@')
+        call check(error, to_upper('abC1@'), 'ABC1@')
         if (allocated(error)) return
     end subroutine test_to_upper
 

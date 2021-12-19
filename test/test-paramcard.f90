@@ -28,7 +28,7 @@ contains
         call parse_param('AB c = 10')
 
         call get_param('a bC', n)
-        call check(error, n == 10)
+        call check(error, n, 10)
         if (allocated(error)) return
 
         call check(error,.not. param_changed())
@@ -39,7 +39,7 @@ contains
         call parse_param('paramcard command: clear')
 
         call get_param('abc', n, 20)
-        call check(error, n == 20)
+        call check(error, n, 20)
         if (allocated(error)) return
 
         call check(error,.not. param_changed())
@@ -51,7 +51,7 @@ contains
         call parse_param('ABC = 30')
 
         call get_param('abc', n, 40)
-        call check(error, n == 30)
+        call check(error, n, 30)
 
         call check(error, param_changed())
         if (allocated(error)) return
@@ -62,7 +62,7 @@ contains
         call parse_param('ABC = 50')
 
         call get_param('abc', n, 50)
-        call check(error, n == 50)
+        call check(error, n, 50)
 
         call check(error,.not. param_changed())
         if (allocated(error)) return
@@ -75,7 +75,7 @@ contains
 
         n = 70
         call get_param('abc', n, n)
-        call check(error, n == 60)
+        call check(error, n, 60)
 
         call check(error, param_changed())
         if (allocated(error)) return
