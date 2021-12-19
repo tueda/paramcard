@@ -1,16 +1,16 @@
 #:include 'common.fypp'
-module test_util
+module test_paramcard_util
     use, intrinsic :: iso_fortran_env, only: int8, int16, int32, int64, real32, real64
     use testdrive, only: new_unittest, unittest_type, error_type, check
     use paramcard_util
     implicit none
     private
 
-    public :: collect_test_util
+    public :: collect_test_paramcard_util
 
 contains
 
-    subroutine collect_test_util(testsuite)
+    subroutine collect_test_paramcard_util(testsuite)
         type(unittest_type), allocatable, intent(out) :: testsuite(:)
 
         testsuite = [ &
@@ -23,7 +23,7 @@ contains
 #:endfor
                     new_unittest('to_upper', test_to_upper) &
                     ]
-    end subroutine collect_test_util
+    end subroutine collect_test_paramcard_util
 
 #:for k in REAL_KINDS
     subroutine test_is_close_${k}$ (error)
@@ -86,12 +86,12 @@ contains
         if (allocated(error)) return
     end subroutine test_to_upper
 
-end module test_util
+end module test_paramcard_util
 
 program tester
     use, intrinsic :: iso_fortran_env, only: error_unit
     use testdrive, only: run_testsuite, new_testsuite, testsuite_type
-    use test_util, only: collect_test_util
+    use test_paramcard_util, only: collect_test_paramcard_util
     implicit none
     integer :: stat, is
     type(testsuite_type), allocatable :: testsuites(:)
@@ -100,7 +100,7 @@ program tester
     stat = 0
 
     testsuites = [ &
-                 new_testsuite('util', collect_test_util) &
+                 new_testsuite('util', collect_test_paramcard_util) &
                  ]
 
     do is = 1, size(testsuites)
