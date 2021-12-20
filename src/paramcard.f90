@@ -1091,6 +1091,7 @@ contains
         character(len=:), allocatable :: filename_
         integer :: lun, ios
         character(len=MAX_LINE) :: linebuf
+        character(len=:), allocatable :: line
 
         filename_ = trim(adjustl(filename))
 
@@ -1113,7 +1114,17 @@ contains
             else if (ios < 0) then
                 exit
             end if
-            call parse_line(linebuf, .false.)  ! false to avoid possible recursion
+            line = trim(adjustl(linebuf))
+
+            ! Skip blank lines and comment lines (starting with '#' or '!').
+            if (len(line) == 0) then
+                cycle
+            end if
+            if (line(1:1) == '#' .or. line(1:1) == '!') then
+                cycle
+            end if
+
+            call parse_line(line, .false.)  ! false to avoid possible recursion
         end do
 
         close (lun)

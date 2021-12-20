@@ -28,6 +28,7 @@ contains
                     new_unittest('set_param_int64', test_set_param_int64), &
                     new_unittest('set_param_real32', test_set_param_real32), &
                     new_unittest('set_param_real64', test_set_param_real64), &
+                    new_unittest('load_param', test_load_param), &
                     new_unittest('parse_param', test_parse_param), &
                     new_unittest('format_param', test_format_param) &
                     ]
@@ -579,6 +580,27 @@ contains
         call check(error,.not. param_unused())
         if (allocated(error)) return
     end subroutine test_set_param_real64
+
+    subroutine test_load_param(error)
+        type(error_type), allocatable, intent(out) :: error
+
+        character(len=:), allocatable :: text(:)
+
+        integer :: x
+
+        call parse_param('paramcard command: clear')
+        call save_text('test_load_1.txt', &
+                       '# comment line', &
+                       '', &
+                       'x = 42', &
+                       '  ! x = 57' &
+                       )
+        call parse_param('paramcard command: load, test_load_1.txt')
+        call delete_file('test_load_1.txt')
+        call get_param('x', x)
+        call check(error, x, 42)
+        if (allocated(error)) return
+    end subroutine test_load_param
 
     subroutine test_parse_param(error)
         type(error_type), allocatable, intent(out) :: error
