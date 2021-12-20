@@ -2,6 +2,14 @@
 #
 # A Fortran linter.
 #
+# This program tries to detect:
+# - blank lines between procedures
+#   https://github.com/pseewald/fprettify/issues/116
+# - double quotes
+#   https://github.com/pseewald/fprettify/issues/118
+# - trailing semicolons
+#   https://github.com/pseewald/fprettify/issues/120
+#
 # Requirements:
 #   python >= 3.6.
 #
@@ -11,7 +19,7 @@ exec python3 "$0" "$@"
 import re
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, Sequence
 
 __doc__ = "A Fortran linter."
 
@@ -103,12 +111,62 @@ def process_line(filename: str, lineno: int, line: str) -> None:
         )
 
 
+def check_vertical_blanks(filename: str, lines: Sequence[str]) -> None:
+    """Check vertical blank lines in the source."""
+    NONE = 0
+    BEGIN = 1
+    END = 2
+
+    previous = NONE
+    n_blanks = 0
+
+    for lineno, line in enumerate(lines):
+        if re.match(r"^\s*!", line):
+            current = NONE
+        else:
+            m = re.match(r"^\s*(?:(?:pure|recursive)\s*)*(subroutine|function)\b", line)
+            if m:
+                current = BEGIN
+            else:
+                m = re.match(r"^\s*end\s*(?:subroutine|function)\b", line)
+                if m:
+                    current = END
+                else:
+                    current = NONE
+
+        if current == BEGIN and previous == END:
+            if not m:
+                raise AssertionError
+            error_line(
+                filename,
+                lineno,
+                m.start(1),
+                m.end(1),
+                line,
+                f"blank line needed before beginning {m.group(1)}",
+            )
+
+        previous = current
+
+        if re.match(r"^\s*$", line):
+            n_blanks += 1
+        else:
+            n_blanks = 0
+
+        if n_blanks == 2:
+            error_line(
+                filename, lineno, 0, max(len(line), 1), line, f"too many blank lines"
+            )
+
+
 def process_file(path: Path) -> None:
     """Process a file."""
     lines = path.read_text().splitlines()
+    filename = str(path)
     for lineno, line in enumerate(lines):
         # NOTE: limitation: linewise.
-        process_line(str(path), lineno, line)
+        process_line(filename, lineno, line)
+    check_vertical_blanks(filename, lines)
 
 
 def main() -> None:
