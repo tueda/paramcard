@@ -1,12 +1,11 @@
 module test_paramcard_77
     use testdrive, only: new_unittest, unittest_type, error_type, check
-    use paramcard, only: parse_param, write_param_summary
-    use paramcard_util, only: remove_spaces
+    use test_util
+    use paramcard, only: parse_param
     implicit none
     private
 
     public :: collect_test_paramcard_77
-
 contains
 
     subroutine collect_test_paramcard_77(testsuite)
@@ -207,28 +206,6 @@ contains
         call check(error, param_changed())
         if (allocated(error)) return
     end subroutine test_paramcard_set_d
-
-    function param_changed() result(res)
-        !! Return `.true.` if any of the parameters have been changed from their default values.
-
-        logical :: res
-            !! Whether any parameters have been changed.
-
-        integer :: lun, ios
-        character(200) :: buf
-
-        open (newunit=lun, status='scratch')
-        call write_param_summary(unit=lun, only_changed=.true.)
-        rewind (lun)
-        read (lun, '(a)', iostat=ios) buf
-        close (lun)
-
-        if (ios < 0) then
-            res = .false.
-        else
-            res = .not. (remove_spaces(buf) == '')
-        end if
-    end function param_changed
 
 end module test_paramcard_77
 
