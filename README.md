@@ -3,35 +3,97 @@
 [![Test](https://github.com/tueda/paramcard/workflows/Test/badge.svg?branch=main)](https://github.com/tueda/paramcard/actions?query=branch:main)
 [![codecov](https://codecov.io/gh/tueda/paramcard/branch/main/graph/badge.svg)](https://codecov.io/gh/tueda/paramcard)
 
-Command-line parameter input made simple.
+Fortran's command-line parameter input made simple.
+
+This Fortran library provides a simple framework to handle input parameters
+given by command-line arguments, like `./a.out a=1 dt=0.01 method=rk45`.
+These parameters can also be read from specified input files as `./a.out input.txt`.
 
 
-## Requirements
+## Usage
 
-- Fortran 2008 compliant compiler
+```fortran
+program demo
+    use, intrinsic :: iso_fortran_env, only: dp => real64
+    use paramcard, only: get_param, write_param_summary
+    implicit none
+    integer :: a, b
+    real(dp) :: x, y
+    character(:), allocatable :: msg
+
+    call get_param('a', a, 1)
+    call get_param('b', b, 2)
+    call get_param('x', x, 0.3d0)
+    call get_param('y', y, 0.4d0)
+    call get_param('msg', msg, '')
+    call write_param_summary
+
+    print *, 'a + b = ', a + b
+    print *, 'x + y = ', x + y
+    if (msg /= '') print *, msg
+end program demo
+```
+The `get_param` procedure takes 3 arguments: `name`, `variable` and `default_value`.
+They specify the parameter name, the destination variable to store the parameter value
+and the default value, respectively.
+The `write_param_summary` procedure prints the summary of the input parameters.
+The compiled program will accept command-line arguments like
+`./demo a=101 x=0.6 msg=Hello`, where parameters are overridden in the form of
+`name=value`. Parameter names are case- and space-insensitive.
+It is also possible to pass parameters via input text files like
+`./demo input.txt`.
+An example of an input file is as follows:
+```ini
+# Comment lines start with "#" or "!".
+a = 101
+x = 0.6
+msg = Hello
+```
+
+
+## Getting started
+
+The library works with Fortran 2008 compliant compilers.
+Because this is a single-file library, one can just copy a MIT-licensed file
+[`paramcard.f90`](https://raw.githubusercontent.com/tueda/paramcard/v0.1.0-rc1/src/paramcard.f90)
+to one's project:
+```bash
+curl -O https://raw.githubusercontent.com/tueda/paramcard/v0.1.0-rc1/src/paramcard.f90
+```
+Alternatively, one can use this repository as a submodule of one's Git repository:
+```bash
+git submodule add https://github.com/tueda/paramcard.git extern/paramcard
+git -C extern/paramcard checkout v0.1.0-rc1
+```
+which makes the library source available at `extern/paramcard/src/paramcard.f90`.
+
+Integration with [`fpm`](https://github.com/fortran-lang/fpm) is also available:
+```toml
+[dependencies]
+paramcard = { git = "https://github.com/tueda/paramcard", tag = "v0.1.0-rc1" }
+```
 
 
 ## Development
 
-Requires [`python`](https://www.python.org/),
-[`fpm`](https://github.com/fortran-lang/fpm),
-[`ford`](https://github.com/Fortran-FOSS-Programmers/ford) and
-[`pre-commit`](https://pre-commit.com/) (as well as
-[`git`](https://git-scm.com/) and a Fortran compiler).
+```bash
+brew install awvwgk/fpm/fpm ford gcc git lcov pre-commit python
+```
 
 ```bash
 pre-commit install
 pre-commit install --hook-type commit-msg
+```
 
-pre-commit run --all-file
-
-fpm test
-fpm run --example demo -- # + arguments
-ford API-doc-FORD-file.md
+```bash
+pre-commit run --all-file               # linter, formatter and preprocessor
+fpm test                                # testing
+GCOV=gcov-11 ./scripts/gen-coverage.sh  # coverage report
+ford API-doc-FORD-file.md               # documentation
 ```
 
 
 License
 -------
 
-MIT
+[MIT](https://github.com/tueda/paramcard/blob/main/LICENSE)

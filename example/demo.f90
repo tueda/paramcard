@@ -1,17 +1,19 @@
 program demo
-    use paramcard
+    use, intrinsic :: iso_fortran_env, only: dp => real64
+    use paramcard, only: get_param, write_param_summary
     implicit none
+    integer :: a, b
+    real(dp) :: x, y
+    character(:), allocatable :: msg
 
-    integer :: n1, n2
-    double precision :: x1, x2
-    character(:), allocatable :: str
+    call get_param('a', a, 1)
+    call get_param('b', b, 2)
+    call get_param('x', x, 0.3d0)
+    call get_param('y', y, 0.4d0)
+    call get_param('msg', msg, '')
+    call write_param_summary
 
-    print *, '========== demo program begin =========='
-    call get_param('n1', n1, 10)
-    call get_param('n2', n2, 20)
-    call get_param('x1', x1, 3.d0)
-    call get_param('x2', x2, 4.d0)
-    call get_param('str', str, 'abc')
-    call write_param_summary()
-    print *, '========== demo program end ============'
+    print *, 'a + b = ', a + b
+    print *, 'x + y = ', x + y
+    if (msg /= '') print *, msg
 end program demo

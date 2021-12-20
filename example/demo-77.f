@@ -1,14 +1,18 @@
       PROGRAM DEMO
-      INTEGER N1, N2
-      DOUBLE PRECISION X1, X2
-      CHARACTER*40 STR
-      WRITE (*,*) '========== DEMO PROGRAM BEGIN =========='
-      CALL PARAMCARD_GET_I('N1', N1, 10)
-      CALL PARAMCARD_GET_I('N2', N2, 20)
-      CALL PARAMCARD_GET_D('X1', X1, 3.D0)
-      CALL PARAMCARD_GET_D('X2', X2, 4.D0)
-      CALL PARAMCARD_GET_S('STR', STR, 'ABC')
+      INTEGER A, B
+      DOUBLE PRECISION X, Y
+      CHARACTER*40 MSG
+C
+      CALL PARAMCARD_GET_I('A', A, 1)
+      CALL PARAMCARD_GET_I('B', B, 2)
+      CALL PARAMCARD_GET_D('X', X, 0.3D0)
+      CALL PARAMCARD_GET_D('Y', Y, 0.4D0)
+      CALL PARAMCARD_GET_S('MSG', MSG, '')
       CALL PARAMCARD_SUMMARY
-      WRITE (*,*) '========== DEMO PROGRAM END ============'
+C
+      WRITE (*,*) 'A + B = ', A + B
+      WRITE (*,*) 'X + Y = ', X + Y
+      IF (MSG .NE. '') WRITE (*,*) MSG
+C
       STOP
       END
