@@ -268,6 +268,7 @@ module paramcard
     public :: get_param
     public :: write_param_summary
     public :: parse_param
+    public :: set_param
     public :: format_param
 
     interface get_param
@@ -281,6 +282,17 @@ module paramcard
         module procedure get_param_real32
         module procedure get_param_real64
     end interface get_param
+
+    interface set_param
+        !! Set a parameter.
+        module procedure set_param_str
+        module procedure set_param_int8
+        module procedure set_param_int16
+        module procedure set_param_int32
+        module procedure set_param_int64
+        module procedure set_param_real32
+        module procedure set_param_real64
+    end interface set_param
 
     type param_type
         !! The type to store information of a parameter.
@@ -768,6 +780,122 @@ contains
         end if
     end subroutine
 
+    subroutine set_param_str(name, value, consumed)
+        !! Set a string parameter.
+
+        character(len=*), intent(in) :: name
+            !! The name of the parameter.
+        character(len=*), intent(in) :: value
+            !! The value to be set.
+        logical, intent(in), optional :: consumed
+            !! Whether this parameter should be considered consumed or not.
+
+        character(len=:), allocatable :: name_
+        character(len=:), allocatable :: value_
+        logical :: consumed_
+        integer :: i
+
+        name_ = to_upper(remove_spaces(name))
+        value_ = trim(adjustl(value))
+        if (present(consumed)) then
+            consumed_ = consumed
+        else
+            consumed_ = .true.
+        end if
+
+        if (len(name_) == 0) then
+            write (error_unit, '(a)') '[ERROR] paramcard: empty parameter name: value = '//value_
+            error stop
+        end if
+
+        i = find_param(name_)
+        if (i == 0) then
+            call add_param(name_, value_)
+            params(n_params)%consumed = consumed_
+        else
+            params(i)%value = value_
+            params(i)%consumed = consumed_
+        end if
+    end subroutine set_param_str
+
+    subroutine set_param_int8(name, value, consumed)
+        !! Set an integer parameter.
+
+        character(len=*), intent(in) :: name
+            !! The name of the parameter.
+        integer(kind=int8), intent(in) :: value
+            !! The value to be set.
+        logical, intent(in), optional :: consumed
+            !! Whether this parameter should be considered consumed or not.
+
+        call set_param_str(name, to_str(value), consumed)
+    end subroutine set_param_int8
+
+    subroutine set_param_int16(name, value, consumed)
+        !! Set an integer parameter.
+
+        character(len=*), intent(in) :: name
+            !! The name of the parameter.
+        integer(kind=int16), intent(in) :: value
+            !! The value to be set.
+        logical, intent(in), optional :: consumed
+            !! Whether this parameter should be considered consumed or not.
+
+        call set_param_str(name, to_str(value), consumed)
+    end subroutine set_param_int16
+
+    subroutine set_param_int32(name, value, consumed)
+        !! Set an integer parameter.
+
+        character(len=*), intent(in) :: name
+            !! The name of the parameter.
+        integer(kind=int32), intent(in) :: value
+            !! The value to be set.
+        logical, intent(in), optional :: consumed
+            !! Whether this parameter should be considered consumed or not.
+
+        call set_param_str(name, to_str(value), consumed)
+    end subroutine set_param_int32
+
+    subroutine set_param_int64(name, value, consumed)
+        !! Set an integer parameter.
+
+        character(len=*), intent(in) :: name
+            !! The name of the parameter.
+        integer(kind=int64), intent(in) :: value
+            !! The value to be set.
+        logical, intent(in), optional :: consumed
+            !! Whether this parameter should be considered consumed or not.
+
+        call set_param_str(name, to_str(value), consumed)
+    end subroutine set_param_int64
+
+    subroutine set_param_real32(name, value, consumed)
+        !! Set a real parameter.
+
+        character(len=*), intent(in) :: name
+            !! The name of the parameter.
+        real(kind=real32), intent(in) :: value
+            !! The value to be set.
+        logical, intent(in), optional :: consumed
+            !! Whether this parameter should be considered consumed or not.
+
+        call set_param_str(name, to_str(value), consumed)
+    end subroutine set_param_real32
+
+    subroutine set_param_real64(name, value, consumed)
+        !! Set a real parameter.
+
+        character(len=*), intent(in) :: name
+            !! The name of the parameter.
+        real(kind=real64), intent(in) :: value
+            !! The value to be set.
+        logical, intent(in), optional :: consumed
+            !! Whether this parameter should be considered consumed or not.
+
+        call set_param_str(name, to_str(value), consumed)
+    end subroutine set_param_real64
+
     function format_param(fmt) result(res)
         !! Format parameter with the given format.
 
@@ -854,8 +982,6 @@ contains
         i = find_param(key_name)
         if (i >= 1) then
             variable = params(i)%value
-            ! We expect that after get_param_str_impl(), add_param() will be called.
-            ! The following is indeed ugly code, hard to understand, but works.
             params(i)%consumed = .true.
         end if
     end subroutine get_param_str_impl
@@ -926,7 +1052,6 @@ contains
             !! The string to be parsed.
 
         integer :: i
-        character(len=:), allocatable :: key, val
 
         i = index(line, '=')
 
@@ -936,21 +1061,7 @@ contains
             error stop
         end if
 
-        key = to_upper(remove_spaces(line(1:i - 1)))
-        val = trim(adjustl(line(i + 1:)))
-
-        if (len(key) == 0) then
-            write (error_unit, '(a)') '[ERROR] paramcard: empty parameter name: '// &
-                & trim(adjustl(line))
-            error stop
-        end if
-
-        i = find_param(key)
-        if (i == 0) then
-            call add_param(key, val)
-        else
-            params(i)%value = val
-        end if
+        call set_param_str(line(1:i - 1), line(i + 1:), .false.)
     end subroutine parse_line
 
     subroutine add_param(name, value)
@@ -1113,6 +1224,58 @@ subroutine paramcard_get_d(name, variable, default_value)
 
     call get_param(name, variable, default_value)
 end subroutine paramcard_get_d
+
+subroutine paramcard_set_s(name, value)
+    !! Set a string parameter.
+    use paramcard, only: set_param
+    implicit none
+
+    character(len=*), intent(in) :: name
+        !! The name of the parameter.
+    character(len=*), intent(in) :: value
+        !! The value to be set.
+
+    call set_param(name, value)
+end subroutine paramcard_set_s
+
+subroutine paramcard_set_i(name, value)
+    !! Set an integer parameter.
+    use paramcard, only: set_param
+    implicit none
+
+    character(len=*), intent(in) :: name
+        !! The name of the parameter.
+    integer, intent(in) :: value
+        !! The value to be set.
+
+    call set_param(name, value)
+end subroutine paramcard_set_i
+
+subroutine paramcard_set_r(name, value)
+    !! Set a real parameter.
+    use paramcard, only: set_param
+    implicit none
+
+    character(len=*), intent(in) :: name
+        !! The name of the parameter.
+    real, intent(in) :: value
+        !! The value to be set.
+
+    call set_param(name, value)
+end subroutine paramcard_set_r
+
+subroutine paramcard_set_d(name, value)
+    !! Set a (double precision) real parameter.
+    use paramcard, only: set_param
+    implicit none
+
+    character(len=*), intent(in) :: name
+        !! The name of the parameter.
+    double precision, intent(in) :: value
+        !! The value to be set.
+
+    call set_param(name, value)
+end subroutine paramcard_set_d
 
 subroutine paramcard_summary
     !! Write the parameter summary.

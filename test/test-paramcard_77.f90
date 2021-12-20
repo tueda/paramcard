@@ -14,9 +14,13 @@ contains
 
         testsuite = [ &
                     new_unittest('paramcard_get_s', test_paramcard_get_s), &
-                    new_unittest('paramcard_get_s', test_paramcard_get_i), &
-                    new_unittest('paramcard_get_s', test_paramcard_get_r), &
-                    new_unittest('paramcard_get_s', test_paramcard_get_d) &
+                    new_unittest('paramcard_get_i', test_paramcard_get_i), &
+                    new_unittest('paramcard_get_r', test_paramcard_get_r), &
+                    new_unittest('paramcard_get_d', test_paramcard_get_d), &
+                    new_unittest('paramcard_set_s', test_paramcard_set_s), &
+                    new_unittest('paramcard_set_i', test_paramcard_set_i), &
+                    new_unittest('paramcard_set_r', test_paramcard_set_r), &
+                    new_unittest('paramcard_set_s', test_paramcard_set_d) &
                     ]
     end subroutine collect_test_paramcard_77
 
@@ -135,6 +139,74 @@ contains
         call check(error, param_changed())
         if (allocated(error)) return
     end subroutine test_paramcard_get_d
+
+    subroutine test_paramcard_set_s(error)
+        type(error_type), allocatable, intent(out) :: error
+
+        character(len=5) :: a, b, c
+
+        call parse_param('paramcard command: clear')
+        a = 'abc42'
+        b = a
+        c = 'fail'
+        call paramcard_set_s('a', a)
+        call paramcard_get_s('a', a, c)
+        call check(error, a, b)
+        if (allocated(error)) return
+        call check(error, param_changed())
+        if (allocated(error)) return
+    end subroutine test_paramcard_set_s
+
+    subroutine test_paramcard_set_i(error)
+        type(error_type), allocatable, intent(out) :: error
+
+        integer :: a, b, c
+
+        call parse_param('paramcard command: clear')
+        a = 42
+        b = a
+        c = 0
+        call paramcard_set_i('a', a)
+        call paramcard_get_i('a', a, c)
+        call check(error, a, b)
+        if (allocated(error)) return
+        call check(error, param_changed())
+        if (allocated(error)) return
+    end subroutine test_paramcard_set_i
+
+    subroutine test_paramcard_set_r(error)
+        type(error_type), allocatable, intent(out) :: error
+
+        real :: a, b, c
+
+        call parse_param('paramcard command: clear')
+        a = 42
+        b = a
+        c = 0
+        call paramcard_set_r('a', a)
+        call paramcard_get_r('a', a, c)
+        call check(error, a, b)
+        if (allocated(error)) return
+        call check(error, param_changed())
+        if (allocated(error)) return
+    end subroutine test_paramcard_set_r
+
+    subroutine test_paramcard_set_d(error)
+        type(error_type), allocatable, intent(out) :: error
+
+        double precision :: a, b, c
+
+        call parse_param('paramcard command: clear')
+        a = 42
+        b = a
+        c = 0
+        call paramcard_set_d('a', a)
+        call paramcard_get_d('a', a, c)
+        call check(error, a, b)
+        if (allocated(error)) return
+        call check(error, param_changed())
+        if (allocated(error)) return
+    end subroutine test_paramcard_set_d
 
     function param_changed() result(res)
         !! Return `.true.` if any of the parameters have been changed from their default values.

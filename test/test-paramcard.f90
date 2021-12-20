@@ -22,6 +22,13 @@ contains
                     new_unittest('get_param_int64', test_get_param_int64), &
                     new_unittest('get_param_real32', test_get_param_real32), &
                     new_unittest('get_param_real64', test_get_param_real64), &
+                    new_unittest('set_param_str', test_set_param_str), &
+                    new_unittest('set_param_int8', test_set_param_int8), &
+                    new_unittest('set_param_int16', test_set_param_int16), &
+                    new_unittest('set_param_int32', test_set_param_int32), &
+                    new_unittest('set_param_int64', test_set_param_int64), &
+                    new_unittest('set_param_real32', test_set_param_real32), &
+                    new_unittest('set_param_real64', test_set_param_real64), &
                     new_unittest('parse_param', test_parse_param), &
                     new_unittest('format_param', test_format_param) &
                     ]
@@ -487,6 +494,93 @@ contains
         if (allocated(error)) return
     end subroutine test_get_param_real64
 
+    subroutine test_set_param_str(error)
+        type(error_type), allocatable, intent(out) :: error
+
+        call parse_param('paramcard command: clear')
+        call set_param('a', 'abc123')
+        call check(error,.not. param_unused())
+        if (allocated(error)) return
+    end subroutine test_set_param_str
+
+    subroutine test_set_param_int8(error)
+        type(error_type), allocatable, intent(out) :: error
+
+        integer(kind=int8) :: x
+
+        x = 123
+
+        call parse_param('paramcard command: clear')
+        call set_param('a', x)
+        call check(error,.not. param_unused())
+        if (allocated(error)) return
+    end subroutine test_set_param_int8
+
+    subroutine test_set_param_int16(error)
+        type(error_type), allocatable, intent(out) :: error
+
+        integer(kind=int16) :: x
+
+        x = 123
+
+        call parse_param('paramcard command: clear')
+        call set_param('a', x)
+        call check(error,.not. param_unused())
+        if (allocated(error)) return
+    end subroutine test_set_param_int16
+
+    subroutine test_set_param_int32(error)
+        type(error_type), allocatable, intent(out) :: error
+
+        integer(kind=int32) :: x
+
+        x = 123
+
+        call parse_param('paramcard command: clear')
+        call set_param('a', x)
+        call check(error,.not. param_unused())
+        if (allocated(error)) return
+    end subroutine test_set_param_int32
+
+    subroutine test_set_param_int64(error)
+        type(error_type), allocatable, intent(out) :: error
+
+        integer(kind=int64) :: x
+
+        x = 123
+
+        call parse_param('paramcard command: clear')
+        call set_param('a', x)
+        call check(error,.not. param_unused())
+        if (allocated(error)) return
+    end subroutine test_set_param_int64
+
+    subroutine test_set_param_real32(error)
+        type(error_type), allocatable, intent(out) :: error
+
+        real(kind=real32) :: x
+
+        x = 123
+
+        call parse_param('paramcard command: clear')
+        call set_param('a', x)
+        call check(error,.not. param_unused())
+        if (allocated(error)) return
+    end subroutine test_set_param_real32
+
+    subroutine test_set_param_real64(error)
+        type(error_type), allocatable, intent(out) :: error
+
+        real(kind=real64) :: x
+
+        x = 123
+
+        call parse_param('paramcard command: clear')
+        call set_param('a', x)
+        call check(error,.not. param_unused())
+        if (allocated(error)) return
+    end subroutine test_set_param_real64
+
     subroutine test_parse_param(error)
         type(error_type), allocatable, intent(out) :: error
 
@@ -540,6 +634,12 @@ contains
         s = format_param('ab{n1}cd{n2}ef')
         call check(error, s, 'ab123cd456ef')
         if (allocated(error)) return
+
+        ! Test for a parameter set by set_param.
+        call parse_param('paramcard command: clear')
+        call set_param('x', 42)
+        s = format_param('{x}')
+        call check(error, s, '42')
     end subroutine test_format_param
 
     subroutine extend_params_array(n)
@@ -578,7 +678,7 @@ contains
         character(200) :: buf
 
         open (newunit=lun, status='scratch')
-        call write_param_summary(unit=lun, only_changed=.true.)
+        call write_param_summary(unit=lun, only_changed=.true., check_unused=.false.)
         rewind (lun)
         read (lun, '(a)', iostat=ios) buf
         close (lun)
@@ -589,6 +689,30 @@ contains
             res = .not. (remove_spaces(buf) == '')
         end if
     end function param_changed
+
+    function param_unused() result(res)
+        !! Return `.true.` if any of the parameters have been not consumed.
+
+        logical :: res
+            !! Whether any parameters have been unused.
+
+        integer :: lun, ios
+        character(200) :: buf
+
+        ! NOTE: currently this is not correctly implemented: abort for any
+        ! unused parameters.
+        open (newunit=lun, status='scratch')
+        call write_param_summary(unit=lun, check_unused=.true.)
+        rewind (lun)
+        read (lun, '(a)', iostat=ios) buf
+        close (lun)
+
+        if (ios < 0) then
+            res = .false.
+        else
+            res = .true.
+        end if
+    end function param_unused
 
 end module test_paramcard
 
