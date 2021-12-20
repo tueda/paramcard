@@ -12,9 +12,11 @@
 set -eu
 set -o pipefail
 
+FLAGS='--flag -coverage --flag -g --flag -fcheck=bounds -flag -fcheck=array-temps -flag -fbacktrace'
+
 if command -v lcov >/dev/null; then
   lcov -z -d build
-  fpm test --flag -coverage
+  fpm test $FLAGS
   if [[ -z "${GCOV:-}" ]]; then
     lcov -c -d build -o build/coverage.info
   else
@@ -25,7 +27,7 @@ if command -v lcov >/dev/null; then
   genhtml -o build/coverage-lcov build/coverage.info
 elif command -v gcovr >/dev/null; then
   find build -name '*.gcda' -exec rm -fv {} \;
-  fpm test --flag -coverage
+  fpm test $FLAGS
   mkdir -p build/coverage-gcovr
   # NOTE: gcovr uses $GCOV.
   gcovr -r . -f src --html --html-details -o build/coverage-gcovr/coverage.html

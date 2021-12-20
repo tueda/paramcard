@@ -60,7 +60,7 @@ jobs:
         run: fpm test
         env:
           FPM_FC: ${{ matrix.fc }}
-          FPM_FFLAGS: -coverage
+          FPM_FFLAGS: -coverage -g -fcheck=bounds -fcheck=array-temps -fbacktrace
 
       - name: Run gcov
         if: matrix.build-type == 'coverage'
