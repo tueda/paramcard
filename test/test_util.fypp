@@ -1,0 +1,137 @@
+#:set MAXRANK = 15
+module test_util
+    !! Helper routines for testing.
+
+    use paramcard, only: get_param, parse_param, write_param_summary
+    use paramcard_util, only: remove_spaces, to_str
+    implicit none
+    private
+
+    public :: save_text
+    public :: delete_file
+    public :: extend_params_array
+    public :: extend_logs_array
+    public :: param_changed
+    public :: param_unused
+
+    interface save_text
+        !! Save text into a file.
+#:for n in range(1, MAXRANK - 1 + 1)
+        module procedure save_text_${n}$
+#:endfor
+    end interface save_text
+
+contains
+
+#:for n in range(1, MAXRANK - 1 + 1)
+    subroutine save_text_${n}$ (filename &
+#:for i in range(1, n + 1)
+                                , text${i}$ &
+#:endfor
+                                )
+        !! Save text into a file.
+
+        character(len=*), intent(in) :: filename
+            !! The file name.
+#:for i in range(1, n + 1)
+        character(len=*), intent(in) :: text${i}$
+            !! A line in the text (${i}$ / ${n}$).
+#:endfor
+
+        integer :: lun
+
+        open (newunit=lun, file=filename, status='replace')
+#:for i in range(1, n + 1)
+        write (lun, '(a)') text${i}$
+#:endfor
+        close (lun)
+    end subroutine save_text_${n}$
+
+#:endfor
+    subroutine delete_file(filename)
+        !! Delete a file.
+
+        character(len=*), intent(in) :: filename
+            !! The file name.
+
+        integer :: lun, ios
+
+        open (newunit=lun, file=filename, status='old', iostat=ios)
+        if (ios == 0) then
+            close (lun, status='delete')
+        end if
+    end subroutine delete_file
+
+    subroutine extend_params_array(n)
+        !! Extend the internal dynamic array of parameters.
+        integer, intent(in) :: n
+            !! The number of parameters to be added.
+
+        integer :: i
+
+        do i = 1, n
+            call parse_param('dummy'//to_str(i)//' = 1')
+        end do
+    end subroutine extend_params_array
+
+    subroutine extend_logs_array(n)
+        !! Extend the internal dynamic array of logs.
+        integer, intent(in) :: n
+            !! The number of log items to be added.
+
+        integer :: i, m
+
+        call extend_params_array(n)
+
+        do i = 1, n
+            call get_param('dummy'//to_str(i), m)
+        end do
+    end subroutine extend_logs_array
+
+    function param_changed() result(res)
+        !! Return `.true.` if any of the parameters have been changed from their default values.
+
+        logical :: res
+            !! Whether any parameters have been changed.
+
+        integer :: lun, ios
+        character(200) :: buf
+
+        open (newunit=lun, status='scratch')
+        call write_param_summary(unit=lun, only_changed=.true., check_unused=.false.)
+        rewind (lun)
+        read (lun, '(a)', iostat=ios) buf
+        close (lun)
+
+        if (ios < 0) then
+            res = .false.
+        else
+            res = .not. (remove_spaces(buf) == '')
+        end if
+    end function param_changed
+
+    function param_unused() result(res)
+        !! Return `.true.` if any of the parameters have been not consumed.
+
+        logical :: res
+            !! Whether any parameters have been unused.
+
+        integer :: lun, ios
+        character(200) :: buf
+
+        ! NOTE: currently this is not correctly implemented: abort for any
+        ! unused parameters.
+        open (newunit=lun, status='scratch')
+        call write_param_summary(unit=lun, check_unused=.true.)
+        rewind (lun)
+        read (lun, '(a)', iostat=ios) buf
+        close (lun)
+
+        if (ios < 0) then
+            res = .false.
+        else
+            res = .true.
+        end if
+    end function param_unused
+
+end module test_util
