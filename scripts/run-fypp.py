@@ -19,18 +19,30 @@ import subprocess
 from pathlib import Path
 from typing import List, Optional
 
-LIBRARY_FILES = ("paramcard.fypp",)
+ROOT_PATH = Path(__file__).resolve().parent.parent
+
+VERSIONED_FILES = ("paramcard.fypp",)
+INCLUDE_DIRS = ("src",)
+IGNORE_FILES = ("common.fypp",)
+
+MAIN_FILE = "src/paramcard.f90"
+VERSION = "x.y.z-dev"
 LICENSE_FILE = "LICENSE"
-INCLUDE_PATHS = ("src",)
-INCLUDE_FILES = ("common.fypp",)
 PROJECT_URL = "https://github.com/tueda/paramcard"
+
+
+def extract_version() -> None:
+    """Extract the current version."""
+    global VERSION
+    version_line = (ROOT_PATH / MAIN_FILE).read_text().splitlines()[2]
+    VERSION = re.sub(r"^!\s*(version)?", "", version_line, flags=re.IGNORECASE).strip()
 
 
 def file_header(path: Path) -> str:
     """Return the file header."""
-    lines = [f"@file {path.name}", "", f"See: {PROJECT_URL}"]
-    lines += Path(LICENSE_FILE).read_text().splitlines()
-    lines[3] = "Licensed under the " + lines[3] + "."
+    lines = [f"@file {path.name}", "", f"Version {VERSION}", "", f"See: {PROJECT_URL}"]
+    lines += (ROOT_PATH / LICENSE_FILE).read_text().splitlines()
+    lines[5] = "Licensed under the " + lines[5] + "."
     lines = [("! " + line).rstrip() for line in lines]
     return "\n".join(lines) + "\n\n"
 
@@ -93,7 +105,7 @@ def main() -> None:
     if not source_files:
         # When no files are given, recursively search for all .fypp files
         # from the project root.
-        os.chdir(Path(__file__).resolve().parent.parent)
+        os.chdir(ROOT_PATH)
         source_files = list(Path(".").glob("**/*.fypp"))
 
     fypp_bin = shutil.which("fypp")
@@ -101,7 +113,7 @@ def main() -> None:
         raise RuntimeError("fypp not found")
 
     fypp_opts = []
-    for f in INCLUDE_PATHS:
+    for f in INCLUDE_DIRS:
         if Path(f).is_dir():
             fypp_opts += ["-I", f]
 
@@ -109,10 +121,12 @@ def main() -> None:
     if not fprettify_bin:
         raise RuntimeError("fprettify not found")
 
+    extract_version()
+
     nchanged = 0
 
     for source_path in source_files:
-        if source_path.name in INCLUDE_FILES:
+        if source_path.name in IGNORE_FILES:
             continue
 
         output_path = source_path.with_suffix(guess_file(source_path))
@@ -126,7 +140,7 @@ def main() -> None:
             subprocess.run([fprettify_bin, output_path], check=True)
 
         new_output = output_path.read_text()
-        if source_path.name in LIBRARY_FILES:
+        if source_path.name in VERSIONED_FILES:
             new_output = file_header(output_path) + new_output
             output_path.write_text(new_output)
         if old_output != new_output:
