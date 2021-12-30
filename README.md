@@ -73,6 +73,25 @@ Integration with [`fpm`](https://github.com/fortran-lang/fpm) is also available:
 paramcard = { git = "https://github.com/tueda/paramcard", tag = "v0.1.0-rc1" }
 ```
 
+[CMake](https://cmake.org/) (v3.14+) integration with the [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) module:
+```cmake
+include(FetchContent)
+```
+```cmake
+FetchContent_Declare(
+  paramcard
+  GIT_REPOSITORY https://github.com/tueda/paramcard.git
+  GIT_TAG        v0.1.0-rc1
+)
+FetchContent_MakeAvailable(paramcard)
+if(paramcard_POPULATED)
+  add_library(paramcard STATIC ${paramcard_SOURCE_DIR}/src/paramcard.f90)
+endif()
+```
+```cmake
+target_link_libraries(main PRIVATE paramcard)
+```
+
 
 ## Development
 
