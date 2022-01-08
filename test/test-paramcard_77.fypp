@@ -19,7 +19,7 @@ contains
 #:for k in ['s', 'i', 'r']
                     new_unittest('paramcard_set_${k}$', test_paramcard_set_${k}$), &
 #:endfor
-                    new_unittest('paramcard_set_s', test_paramcard_set_d) &
+                    new_unittest('paramcard_set_d', test_paramcard_set_d) &
                     ]
     end subroutine collect_test_paramcard_77
 

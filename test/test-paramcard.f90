@@ -30,7 +30,8 @@ contains
                     new_unittest('paramcard_set_real64', test_paramcard_set_real64), &
                     new_unittest('paramcard_load', test_paramcard_load), &
                     new_unittest('paramcard_parse', test_paramcard_parse), &
-                    new_unittest('paramcard_format', test_paramcard_format) &
+                    new_unittest('paramcard_format', test_paramcard_format), &
+                    new_unittest('paramcard_output', test_paramcard_output) &
                     ]
     end subroutine collect_test_paramcard
 
@@ -661,8 +662,48 @@ contains
         call paramcard_set('x', 42)
         s = paramcard_format('{x}')
         call check(error, s, '42')
+        if (allocated(error)) return
     end subroutine test_paramcard_format
 
+    subroutine test_paramcard_output(error)
+        type(error_type), allocatable, intent(out) :: error
+
+        integer :: n
+
+        ! Output.
+        call paramcard_parse('paramcard command: clear')
+        call paramcard_set('output_file', 'test_output_1.txt')
+        call paramcard_set('output_format', '{a} = {b}')
+        call paramcard_set('a', 'n')
+        call paramcard_set('b', 123)
+        call paramcard_output
+
+        ! Check the output.
+        call paramcard_parse('paramcard command: clear')
+        call paramcard_parse('paramcard command: load, test_output_1.txt')
+        call paramcard_get('n', n)
+        call check(error, n, 123)
+        if (allocated(error)) return
+
+        ! Output, with specifying file_param and format_param
+        call paramcard_parse('paramcard command: clear')
+        call paramcard_set('outfile', 'test_output_2.txt')
+        call paramcard_set('outfmt', '{a} = {b}')
+        call paramcard_set('a', 'n')
+        call paramcard_set('b', 123)
+        call paramcard_output('outfile', 'outfmt')
+
+        ! Check the output.
+        call paramcard_parse('paramcard command: clear')
+        call paramcard_parse('paramcard command: load, test_output_2.txt')
+        call paramcard_get('n', n)
+        call check(error, n, 123)
+        if (allocated(error)) return
+
+        ! Teardown.
+        call delete_file('test_output_1.txt')
+        call delete_file('test_output_2.txt')
+    end subroutine test_paramcard_output
 end module test_paramcard
 
 program tester

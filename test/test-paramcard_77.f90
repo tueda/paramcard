@@ -19,7 +19,7 @@ contains
                     new_unittest('paramcard_set_s', test_paramcard_set_s), &
                     new_unittest('paramcard_set_i', test_paramcard_set_i), &
                     new_unittest('paramcard_set_r', test_paramcard_set_r), &
-                    new_unittest('paramcard_set_s', test_paramcard_set_d) &
+                    new_unittest('paramcard_set_d', test_paramcard_set_d) &
                     ]
     end subroutine collect_test_paramcard_77
 

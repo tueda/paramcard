@@ -272,6 +272,7 @@ module paramcard
     public :: paramcard_parse
     public :: paramcard_summary
     public :: paramcard_format
+    public :: paramcard_output
 
     interface paramcard_get
         !! Retrieve a parameter.
@@ -970,6 +971,51 @@ contains
         res = result
     end function paramcard_format
 
+    subroutine paramcard_output(file_param, format_param)
+        !! Write output to a file with a format, which are specified by parameters.
+
+        character(len=*), intent(in), optional :: file_param
+            !! The parameter to specify the output file.
+        character(len=*), intent(in), optional :: format_param
+            !! The parameter to specify the output format.
+
+        character(len=:), allocatable :: file_param_, format_param_, file, format, output
+        integer :: lun, ios
+
+        if (present(file_param)) then
+            file_param_ = file_param
+        else
+            file_param_ = 'output_file'
+        end if
+
+        if (present(format_param)) then
+            format_param_ = format_param
+        else
+            format_param_ = 'output_format'
+        end if
+
+        if (file_param_ == '' .or. format_param_ == '') then
+            return
+        end if
+
+        call paramcard_get(file_param_, file, '')
+        call paramcard_get(format_param_, format, '')
+
+        if (file == '' .or. format == '') then
+            return
+        end if
+
+        output = paramcard_format(format)
+
+        open (newunit=lun, file=file, status='replace', iostat=ios)
+        if (ios /= 0) then
+            write (error_unit, '(a)') '[ERROR] paramcard: failed to open: '//file
+            error stop
+        end if
+        write (lun, '(a)'), output
+        close (lun)
+    end subroutine paramcard_output
+
     subroutine get_param_str_impl(name, variable, canon_name)
         !! Retrieve a string parameter.
 
@@ -1351,3 +1397,16 @@ subroutine paramcard_summary
 
     call paramcard_summary_f90
 end subroutine paramcard_summary
+
+subroutine paramcard_output(file_param, format_param)
+    !! Write output to a file with a format, which are specified as parameters.
+    use paramcard, only: paramcard_output_f90 => paramcard_output
+    implicit none
+
+    character(len=*), intent(in) :: file_param
+        !! The parameter to specify the output file.
+    character(len=*), intent(in) :: format_param
+        !! The parameter to specify the output format.
+
+    call paramcard_output_f90(file_param, format_param)
+end subroutine paramcard_output
