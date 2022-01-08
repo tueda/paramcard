@@ -6,6 +6,7 @@
 
 #:set TYPE_LIST = [(k, 'integer(kind={})'.format(k)) for k in INT_KINDS]
 #:set TYPE_LIST = TYPE_LIST + [(k, 'real(kind={})'.format(k)) for k in REAL_KINDS]
+#:set TYPE_LIST = TYPE_LIST + [('s', 'character(len=*)'), ('i', 'integer'), ('r', 'real'), ('d', 'double precision')]
 #:set TYPE_DICT = dict(TYPE_LIST)
 #:set type = lambda k: TYPE_DICT[k]
 

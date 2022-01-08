@@ -19,7 +19,7 @@ contains
 #:endfor
                     new_unittest('remove_spaces', test_remove_spaces), &
 #:for k in INT_KINDS + REAL_KINDS
-                    new_unittest('to_str_${k}$', test_to_str_${k}$), &
+                    new_unittest('to_string_${k}$', test_to_string_${k}$), &
 #:endfor
                     new_unittest('to_upper', test_to_upper) &
                     ]
@@ -51,7 +51,7 @@ contains
     end subroutine test_remove_spaces
 
 #:for k in INT_KINDS + REAL_KINDS
-    subroutine test_to_str_${k}$ (error)
+    subroutine test_to_string_${k}$ (error)
         type(error_type), allocatable, intent(out) :: error
 
         character(len=:), allocatable :: s
@@ -59,24 +59,24 @@ contains
 
 #:if k in INT_KINDS
         x = 123_${k}$
-        s = to_str(x)
+        s = to_string(x)
         call check(error, s, '123')
         if (allocated(error)) return
 
         x = -123_${k}$
-        s = to_str(x)
+        s = to_string(x)
         read (s, *) y
         call check(error, x, y)
         if (allocated(error)) return
 #:else
         x = 3
         x = 1 / x
-        s = to_str(x)
+        s = to_string(x)
         read (s, *) y
         call check(error, is_close(x, y))
         if (allocated(error)) return
 #:endif
-    end subroutine test_to_str_${k}$
+    end subroutine test_to_string_${k}$
 
 #:endfor
     subroutine test_to_upper(error)

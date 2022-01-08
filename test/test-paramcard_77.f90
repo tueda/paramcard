@@ -1,7 +1,7 @@
 module test_paramcard_77
     use testdrive, only: new_unittest, unittest_type, error_type, check
     use test_util
-    use paramcard, only: parse_param
+    use paramcard, only: paramcard_parse
     implicit none
     private
 
@@ -29,7 +29,7 @@ contains
         character(len=5) :: s
 
         ! Value being longer than the length -> truncated.
-        call parse_param('paramcard command: clear')
+        call paramcard_parse('paramcard command: clear')
         call paramcard_get_s('a', s, 'aB 123')
         call check(error, s, 'aB 12')
         if (allocated(error)) return
@@ -37,7 +37,7 @@ contains
         if (allocated(error)) return
 
         ! Value being shorter than the length.
-        call parse_param('paramcard command: clear')
+        call paramcard_parse('paramcard command: clear')
         call paramcard_get_s('a', s, 'a1')
         call check(error, s, 'a1   ')
         if (allocated(error)) return
@@ -45,7 +45,7 @@ contains
         if (allocated(error)) return
 
         ! Same variable for `variable` and `default_value`, unchanged.
-        call parse_param('paramcard command: clear')
+        call paramcard_parse('paramcard command: clear')
         s = 'a1234'
         call paramcard_get_s('a', s, s)
         call check(error, s, 'a1234')
@@ -54,8 +54,8 @@ contains
         if (allocated(error)) return
 
         ! Same variable for `variable` and `default_value`, changed.
-        call parse_param('paramcard command: clear')
-        call parse_param('a = b1234')
+        call paramcard_parse('paramcard command: clear')
+        call paramcard_parse('a = b1234')
         s = 'a1234'
         call paramcard_get_s('a', s, s)
         call check(error, s, 'b1234')
@@ -69,7 +69,7 @@ contains
 
         integer :: x, y
 
-        call parse_param('paramcard command: clear')
+        call paramcard_parse('paramcard command: clear')
         x = 456
         call paramcard_get_i('x', x, x)
         y = 456
@@ -78,8 +78,8 @@ contains
         call check(error,.not. param_changed())
         if (allocated(error)) return
 
-        call parse_param('paramcard command: clear')
-        call parse_param('x = 123')
+        call paramcard_parse('paramcard command: clear')
+        call paramcard_parse('x = 123')
         x = 456
         call paramcard_get_i('x', x, x)
         y = 123
@@ -94,7 +94,7 @@ contains
 
         real :: x, y
 
-        call parse_param('paramcard command: clear')
+        call paramcard_parse('paramcard command: clear')
         x = 456
         call paramcard_get_r('x', x, x)
         y = 456
@@ -103,8 +103,8 @@ contains
         call check(error,.not. param_changed())
         if (allocated(error)) return
 
-        call parse_param('paramcard command: clear')
-        call parse_param('x = 123')
+        call paramcard_parse('paramcard command: clear')
+        call paramcard_parse('x = 123')
         x = 456
         call paramcard_get_r('x', x, x)
         y = 123
@@ -119,7 +119,7 @@ contains
 
         double precision :: x, y
 
-        call parse_param('paramcard command: clear')
+        call paramcard_parse('paramcard command: clear')
         x = 456
         call paramcard_get_d('x', x, x)
         y = 456
@@ -128,8 +128,8 @@ contains
         call check(error,.not. param_changed())
         if (allocated(error)) return
 
-        call parse_param('paramcard command: clear')
-        call parse_param('x = 123')
+        call paramcard_parse('paramcard command: clear')
+        call paramcard_parse('x = 123')
         x = 456
         call paramcard_get_d('x', x, x)
         y = 123
@@ -144,7 +144,7 @@ contains
 
         character(len=5) :: a, b, c
 
-        call parse_param('paramcard command: clear')
+        call paramcard_parse('paramcard command: clear')
         a = 'abc42'
         b = a
         c = 'fail'
@@ -161,7 +161,7 @@ contains
 
         integer :: a, b, c
 
-        call parse_param('paramcard command: clear')
+        call paramcard_parse('paramcard command: clear')
         a = 42
         b = a
         c = 0
@@ -178,7 +178,7 @@ contains
 
         real :: a, b, c
 
-        call parse_param('paramcard command: clear')
+        call paramcard_parse('paramcard command: clear')
         a = 42
         b = a
         c = 0
@@ -195,7 +195,7 @@ contains
 
         double precision :: a, b, c
 
-        call parse_param('paramcard command: clear')
+        call paramcard_parse('paramcard command: clear')
         a = 42
         b = a
         c = 0

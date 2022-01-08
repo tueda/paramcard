@@ -15,28 +15,29 @@ These parameters can also be read from specified input files as `./a.out input.t
 ```fortran
 program demo
     use, intrinsic :: iso_fortran_env, only: dp => real64
-    use paramcard, only: get_param, write_param_summary
+    use paramcard, only: paramcard_get, paramcard_summary
     implicit none
     integer :: a, b
     real(dp) :: x, y
     character(:), allocatable :: msg
 
-    call get_param('a', a, 1)
-    call get_param('b', b, 2)
-    call get_param('x', x, 0.3d0)
-    call get_param('y', y, 0.4d0)
-    call get_param('msg', msg, '')
-    call write_param_summary
+    call paramcard_get('a', a, 1)
+    call paramcard_get('b', b, 2)
+    call paramcard_get('x', x, 0.3d0)
+    call paramcard_get('y', y, 0.4d0)
+    call paramcard_get('msg', msg, '')
+    call paramcard_summary
 
     print *, 'a + b = ', a + b
     print *, 'x + y = ', x + y
     if (msg /= '') print *, msg
 end program demo
 ```
-The `get_param` procedure takes 3 arguments: `name`, `variable` and `default_value`.
+The `paramcard_get` procedure takes 3 arguments: `name`, `variable` and `default_value`.
 They specify the parameter name, the destination variable to store the parameter value
-and the default value, respectively.
-The `write_param_summary` procedure prints the summary of the input parameters.
+and the (optional) default value, respectively.
+The `paramcard_summary` procedure prints the summary of the input parameters and
+aborts if there are any given parameters that are actually unused in the program.
 The compiled program will accept command-line arguments like
 `./demo a=101 x=0.6 msg=Hello`, where parameters are overridden in the form of
 `name=value`. Parameter names are case- and space-insensitive.

@@ -1,8 +1,8 @@
 module test_util
     !! Helper routines for testing.
 
-    use paramcard, only: get_param, parse_param, write_param_summary
-    use paramcard_util, only: remove_spaces, to_str
+    use paramcard, only: paramcard_get, paramcard_parse, paramcard_summary
+    use paramcard_util, only: remove_spaces, to_string
     implicit none
     private
 
@@ -657,7 +657,7 @@ contains
         integer :: i
 
         do i = 1, n
-            call parse_param('dummy'//to_str(i)//' = 1')
+            call paramcard_parse('dummy'//to_string(i)//' = 1')
         end do
     end subroutine extend_params_array
 
@@ -671,7 +671,7 @@ contains
         call extend_params_array(n)
 
         do i = 1, n
-            call get_param('dummy'//to_str(i), m)
+            call paramcard_get('dummy'//to_string(i), m)
         end do
     end subroutine extend_logs_array
 
@@ -685,7 +685,7 @@ contains
         character(200) :: buf
 
         open (newunit=lun, status='scratch')
-        call write_param_summary(unit=lun, only_changed=.true., check_unused=.false.)
+        call paramcard_summary(unit=lun, only_changed=.true., check_unused=.false.)
         rewind (lun)
         read (lun, '(a)', iostat=ios) buf
         close (lun)
@@ -709,7 +709,7 @@ contains
         ! NOTE: currently this is not correctly implemented: abort for any
         ! unused parameters.
         open (newunit=lun, status='scratch')
-        call write_param_summary(unit=lun, check_unused=.true.)
+        call paramcard_summary(unit=lun, check_unused=.true.)
         rewind (lun)
         read (lun, '(a)', iostat=ios) buf
         close (lun)

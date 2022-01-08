@@ -34,7 +34,7 @@ module paramcard_util
 
     public is_close
     public remove_spaces
-    public to_str
+    public to_string
     public to_upper
 
     interface is_close
@@ -43,15 +43,15 @@ module paramcard_util
         module procedure is_close_real64
     end interface is_close
 
-    interface to_str
+    interface to_string
         !! Return the string representation of the given value.
-        module procedure to_str_int8
-        module procedure to_str_int16
-        module procedure to_str_int32
-        module procedure to_str_int64
-        module procedure to_str_real32
-        module procedure to_str_real64
-    end interface to_str
+        module procedure to_string_int8
+        module procedure to_string_int16
+        module procedure to_string_int32
+        module procedure to_string_int64
+        module procedure to_string_real32
+        module procedure to_string_real64
+    end interface to_string
 
     integer, parameter :: MAX_BUF = 50
     integer, parameter :: DEFAULT_EPSILON_COEFF = 100
@@ -151,7 +151,7 @@ contains
         end if
     end function remove_spaces
 
-    pure function to_str_int8(value) result(res)
+    pure function to_string_int8(value) result(res)
         !! Return the string representation of the given value.
 
         integer(kind=int8), intent(in) :: value
@@ -163,9 +163,9 @@ contains
 
         write (tmp, *) value
         res = trim(adjustl(tmp))
-    end function to_str_int8
+    end function to_string_int8
 
-    pure function to_str_int16(value) result(res)
+    pure function to_string_int16(value) result(res)
         !! Return the string representation of the given value.
 
         integer(kind=int16), intent(in) :: value
@@ -177,9 +177,9 @@ contains
 
         write (tmp, *) value
         res = trim(adjustl(tmp))
-    end function to_str_int16
+    end function to_string_int16
 
-    pure function to_str_int32(value) result(res)
+    pure function to_string_int32(value) result(res)
         !! Return the string representation of the given value.
 
         integer(kind=int32), intent(in) :: value
@@ -191,9 +191,9 @@ contains
 
         write (tmp, *) value
         res = trim(adjustl(tmp))
-    end function to_str_int32
+    end function to_string_int32
 
-    pure function to_str_int64(value) result(res)
+    pure function to_string_int64(value) result(res)
         !! Return the string representation of the given value.
 
         integer(kind=int64), intent(in) :: value
@@ -205,9 +205,9 @@ contains
 
         write (tmp, *) value
         res = trim(adjustl(tmp))
-    end function to_str_int64
+    end function to_string_int64
 
-    pure function to_str_real32(value) result(res)
+    pure function to_string_real32(value) result(res)
         !! Return the string representation of the given value.
 
         real(kind=real32), intent(in) :: value
@@ -219,9 +219,9 @@ contains
 
         write (tmp, *) value
         res = trim(adjustl(tmp))
-    end function to_str_real32
+    end function to_string_real32
 
-    pure function to_str_real64(value) result(res)
+    pure function to_string_real64(value) result(res)
         !! Return the string representation of the given value.
 
         real(kind=real64), intent(in) :: value
@@ -233,7 +233,7 @@ contains
 
         write (tmp, *) value
         res = trim(adjustl(tmp))
-    end function to_str_real64
+    end function to_string_real64
 
     pure function to_upper(str) result(res)
         !! Convert a string into uppercase.
@@ -267,34 +267,34 @@ module paramcard
     implicit none
     private
 
-    public :: get_param
-    public :: write_param_summary
-    public :: parse_param
-    public :: set_param
-    public :: format_param
+    public :: paramcard_get
+    public :: paramcard_set
+    public :: paramcard_parse
+    public :: paramcard_summary
+    public :: paramcard_format
 
-    interface get_param
+    interface paramcard_get
         !! Retrieve a parameter.
-        module procedure get_param_str
-        module procedure get_param_len_str
-        module procedure get_param_int8
-        module procedure get_param_int16
-        module procedure get_param_int32
-        module procedure get_param_int64
-        module procedure get_param_real32
-        module procedure get_param_real64
-    end interface get_param
+        module procedure paramcard_get_str
+        module procedure paramcard_get_len_str
+        module procedure paramcard_get_int8
+        module procedure paramcard_get_int16
+        module procedure paramcard_get_int32
+        module procedure paramcard_get_int64
+        module procedure paramcard_get_real32
+        module procedure paramcard_get_real64
+    end interface paramcard_get
 
-    interface set_param
+    interface paramcard_set
         !! Set a parameter.
-        module procedure set_param_str
-        module procedure set_param_int8
-        module procedure set_param_int16
-        module procedure set_param_int32
-        module procedure set_param_int64
-        module procedure set_param_real32
-        module procedure set_param_real64
-    end interface set_param
+        module procedure paramcard_set_str
+        module procedure paramcard_set_int8
+        module procedure paramcard_set_int16
+        module procedure paramcard_set_int32
+        module procedure paramcard_set_int64
+        module procedure paramcard_set_real32
+        module procedure paramcard_set_real64
+    end interface paramcard_set
 
     type param_type
         !! The type to store information of a parameter.
@@ -337,7 +337,7 @@ module paramcard
     integer, parameter :: MAX_LINE = 4000
 
 contains
-    subroutine get_param_str(name, variable, default_value)
+    subroutine paramcard_get_str(name, variable, default_value)
         !! Retrieve a string parameter.
 
         character(len=*), intent(in) :: name
@@ -371,9 +371,9 @@ contains
             end if
         end if
         call add_log(canon_name, variable)
-    end subroutine get_param_str
+    end subroutine paramcard_get_str
 
-    subroutine get_param_len_str(length, name, variable, default_value)
+    subroutine paramcard_get_len_str(length, name, variable, default_value)
         !! Retrieve a string parameter.
 
         integer, intent(in) :: length
@@ -405,9 +405,9 @@ contains
             return
         end if
         call add_log(canon_name, trim(variable))
-    end subroutine get_param_len_str
+    end subroutine paramcard_get_len_str
 
-    subroutine get_param_int8(name, variable, default_value)
+    subroutine paramcard_get_int8(name, variable, default_value)
         !! Retrieve an integer parameter.
 
         character(len=*), intent(in) :: name
@@ -445,14 +445,14 @@ contains
 
         if (present(default_value)) then
             if (variable /= default_value_) then
-                call add_log(canon_name, to_str(variable), to_str(default_value_))
+                call add_log(canon_name, to_string(variable), to_string(default_value_))
                 return
             end if
         end if
-        call add_log(canon_name, to_str(variable))
-    end subroutine get_param_int8
+        call add_log(canon_name, to_string(variable))
+    end subroutine paramcard_get_int8
 
-    subroutine get_param_int16(name, variable, default_value)
+    subroutine paramcard_get_int16(name, variable, default_value)
         !! Retrieve an integer parameter.
 
         character(len=*), intent(in) :: name
@@ -490,14 +490,14 @@ contains
 
         if (present(default_value)) then
             if (variable /= default_value_) then
-                call add_log(canon_name, to_str(variable), to_str(default_value_))
+                call add_log(canon_name, to_string(variable), to_string(default_value_))
                 return
             end if
         end if
-        call add_log(canon_name, to_str(variable))
-    end subroutine get_param_int16
+        call add_log(canon_name, to_string(variable))
+    end subroutine paramcard_get_int16
 
-    subroutine get_param_int32(name, variable, default_value)
+    subroutine paramcard_get_int32(name, variable, default_value)
         !! Retrieve an integer parameter.
 
         character(len=*), intent(in) :: name
@@ -535,14 +535,14 @@ contains
 
         if (present(default_value)) then
             if (variable /= default_value_) then
-                call add_log(canon_name, to_str(variable), to_str(default_value_))
+                call add_log(canon_name, to_string(variable), to_string(default_value_))
                 return
             end if
         end if
-        call add_log(canon_name, to_str(variable))
-    end subroutine get_param_int32
+        call add_log(canon_name, to_string(variable))
+    end subroutine paramcard_get_int32
 
-    subroutine get_param_int64(name, variable, default_value)
+    subroutine paramcard_get_int64(name, variable, default_value)
         !! Retrieve an integer parameter.
 
         character(len=*), intent(in) :: name
@@ -580,14 +580,14 @@ contains
 
         if (present(default_value)) then
             if (variable /= default_value_) then
-                call add_log(canon_name, to_str(variable), to_str(default_value_))
+                call add_log(canon_name, to_string(variable), to_string(default_value_))
                 return
             end if
         end if
-        call add_log(canon_name, to_str(variable))
-    end subroutine get_param_int64
+        call add_log(canon_name, to_string(variable))
+    end subroutine paramcard_get_int64
 
-    subroutine get_param_real32(name, variable, default_value)
+    subroutine paramcard_get_real32(name, variable, default_value)
         !! Retrieve a real parameter.
 
         character(len=*), intent(in) :: name
@@ -625,14 +625,14 @@ contains
 
         if (present(default_value)) then
             if (.not. is_close(variable, default_value_)) then
-                call add_log(canon_name, to_str(variable), to_str(default_value_))
+                call add_log(canon_name, to_string(variable), to_string(default_value_))
                 return
             end if
         end if
-        call add_log(canon_name, to_str(variable))
-    end subroutine get_param_real32
+        call add_log(canon_name, to_string(variable))
+    end subroutine paramcard_get_real32
 
-    subroutine get_param_real64(name, variable, default_value)
+    subroutine paramcard_get_real64(name, variable, default_value)
         !! Retrieve a real parameter.
 
         character(len=*), intent(in) :: name
@@ -670,14 +670,14 @@ contains
 
         if (present(default_value)) then
             if (.not. is_close(variable, default_value_)) then
-                call add_log(canon_name, to_str(variable), to_str(default_value_))
+                call add_log(canon_name, to_string(variable), to_string(default_value_))
                 return
             end if
         end if
-        call add_log(canon_name, to_str(variable))
-    end subroutine get_param_real64
+        call add_log(canon_name, to_string(variable))
+    end subroutine paramcard_get_real64
 
-    subroutine write_param_summary(unit, only_changed, show_default, check_unused, prefix)
+    subroutine paramcard_summary(unit, only_changed, show_default, check_unused, prefix)
         !! Write the parameter summary.
 
         integer, optional, intent(in) :: unit
@@ -762,9 +762,9 @@ contains
                 error stop
             end if
         end if
-    end subroutine write_param_summary
+    end subroutine paramcard_summary
 
-    subroutine parse_param(str)
+    subroutine paramcard_parse(str)
         !! Parse a string containing `'NAME = VALUE'`.
 
         character(len=*), intent(in) :: str
@@ -792,9 +792,9 @@ contains
         else
             call parse_line(str, .false.)
         end if
-    end subroutine
+    end subroutine paramcard_parse
 
-    subroutine set_param_str(name, value, consumed)
+    subroutine paramcard_set_str(name, value, consumed)
         !! Set a string parameter.
 
         character(len=*), intent(in) :: name
@@ -830,9 +830,9 @@ contains
             params(i)%value = value_
             params(i)%consumed = consumed_
         end if
-    end subroutine set_param_str
+    end subroutine paramcard_set_str
 
-    subroutine set_param_int8(name, value, consumed)
+    subroutine paramcard_set_int8(name, value, consumed)
         !! Set an integer parameter.
 
         character(len=*), intent(in) :: name
@@ -842,10 +842,10 @@ contains
         logical, intent(in), optional :: consumed
             !! Whether this parameter should be considered consumed or not.
 
-        call set_param_str(name, to_str(value), consumed)
-    end subroutine set_param_int8
+        call paramcard_set_str(name, to_string(value), consumed)
+    end subroutine paramcard_set_int8
 
-    subroutine set_param_int16(name, value, consumed)
+    subroutine paramcard_set_int16(name, value, consumed)
         !! Set an integer parameter.
 
         character(len=*), intent(in) :: name
@@ -855,10 +855,10 @@ contains
         logical, intent(in), optional :: consumed
             !! Whether this parameter should be considered consumed or not.
 
-        call set_param_str(name, to_str(value), consumed)
-    end subroutine set_param_int16
+        call paramcard_set_str(name, to_string(value), consumed)
+    end subroutine paramcard_set_int16
 
-    subroutine set_param_int32(name, value, consumed)
+    subroutine paramcard_set_int32(name, value, consumed)
         !! Set an integer parameter.
 
         character(len=*), intent(in) :: name
@@ -868,10 +868,10 @@ contains
         logical, intent(in), optional :: consumed
             !! Whether this parameter should be considered consumed or not.
 
-        call set_param_str(name, to_str(value), consumed)
-    end subroutine set_param_int32
+        call paramcard_set_str(name, to_string(value), consumed)
+    end subroutine paramcard_set_int32
 
-    subroutine set_param_int64(name, value, consumed)
+    subroutine paramcard_set_int64(name, value, consumed)
         !! Set an integer parameter.
 
         character(len=*), intent(in) :: name
@@ -881,10 +881,10 @@ contains
         logical, intent(in), optional :: consumed
             !! Whether this parameter should be considered consumed or not.
 
-        call set_param_str(name, to_str(value), consumed)
-    end subroutine set_param_int64
+        call paramcard_set_str(name, to_string(value), consumed)
+    end subroutine paramcard_set_int64
 
-    subroutine set_param_real32(name, value, consumed)
+    subroutine paramcard_set_real32(name, value, consumed)
         !! Set a real parameter.
 
         character(len=*), intent(in) :: name
@@ -894,10 +894,10 @@ contains
         logical, intent(in), optional :: consumed
             !! Whether this parameter should be considered consumed or not.
 
-        call set_param_str(name, to_str(value), consumed)
-    end subroutine set_param_real32
+        call paramcard_set_str(name, to_string(value), consumed)
+    end subroutine paramcard_set_real32
 
-    subroutine set_param_real64(name, value, consumed)
+    subroutine paramcard_set_real64(name, value, consumed)
         !! Set a real parameter.
 
         character(len=*), intent(in) :: name
@@ -907,10 +907,10 @@ contains
         logical, intent(in), optional :: consumed
             !! Whether this parameter should be considered consumed or not.
 
-        call set_param_str(name, to_str(value), consumed)
-    end subroutine set_param_real64
+        call paramcard_set_str(name, to_string(value), consumed)
+    end subroutine paramcard_set_real64
 
-    function format_param(fmt) result(res)
+    function paramcard_format(fmt) result(res)
         !! Format parameter with the given format.
 
         character(len=*), intent(in) :: fmt
@@ -968,7 +968,7 @@ contains
         end do
 
         res = result
-    end function format_param
+    end function paramcard_format
 
     subroutine get_param_str_impl(name, variable, canon_name)
         !! Retrieve a string parameter.
@@ -1080,7 +1080,7 @@ contains
                 error stop
             end if
         else
-            call set_param_str(line(1:i - 1), line(i + 1:), .false.)
+            call paramcard_set_str(line(1:i - 1), line(i + 1:), .false.)
         end if
     end subroutine parse_line
 
@@ -1234,7 +1234,7 @@ end module paramcard
 
 subroutine paramcard_get_s(name, variable, default_value)
     !! Retrieve a string parameter.
-    use paramcard, only: get_param
+    use paramcard, only: paramcard_get_f90 => paramcard_get
     implicit none
 
     character(len=*), intent(in) :: name
@@ -1244,13 +1244,12 @@ subroutine paramcard_get_s(name, variable, default_value)
     character(len=*), intent(in) :: default_value
         !! The value to be used if the parameter not found.
 
-    call get_param(len(variable), name, variable, default_value)
-
+    call paramcard_get_f90(len(variable), name, variable, default_value)
 end subroutine paramcard_get_s
 
 subroutine paramcard_get_i(name, variable, default_value)
     !! Retrieve an integer parameter.
-    use paramcard, only: get_param
+    use paramcard, only: paramcard_get_f90 => paramcard_get
     implicit none
 
     character(len=*), intent(in) :: name
@@ -1260,12 +1259,12 @@ subroutine paramcard_get_i(name, variable, default_value)
     integer, intent(in) :: default_value
         !! The value to be used if the parameter not found.
 
-    call get_param(name, variable, default_value)
+    call paramcard_get_f90(name, variable, default_value)
 end subroutine paramcard_get_i
 
 subroutine paramcard_get_r(name, variable, default_value)
     !! Retrieve a real parameter.
-    use paramcard, only: get_param
+    use paramcard, only: paramcard_get_f90 => paramcard_get
     implicit none
 
     character(len=*), intent(in) :: name
@@ -1275,12 +1274,12 @@ subroutine paramcard_get_r(name, variable, default_value)
     real, intent(in) :: default_value
         !! The value to be used if the parameter not found.
 
-    call get_param(name, variable, default_value)
+    call paramcard_get_f90(name, variable, default_value)
 end subroutine paramcard_get_r
 
 subroutine paramcard_get_d(name, variable, default_value)
-    !! Retrieve a (double precision) real parameter.
-    use paramcard, only: get_param
+    !! Retrieve a (double-precision) real parameter.
+    use paramcard, only: paramcard_get_f90 => paramcard_get
     implicit none
 
     character(len=*), intent(in) :: name
@@ -1290,12 +1289,12 @@ subroutine paramcard_get_d(name, variable, default_value)
     double precision, intent(in) :: default_value
         !! The value to be used if the parameter not found.
 
-    call get_param(name, variable, default_value)
+    call paramcard_get_f90(name, variable, default_value)
 end subroutine paramcard_get_d
 
 subroutine paramcard_set_s(name, value)
     !! Set a string parameter.
-    use paramcard, only: set_param
+    use paramcard, only: paramcard_set_f90 => paramcard_set
     implicit none
 
     character(len=*), intent(in) :: name
@@ -1303,12 +1302,12 @@ subroutine paramcard_set_s(name, value)
     character(len=*), intent(in) :: value
         !! The value to be set.
 
-    call set_param(name, value)
+    call paramcard_set_f90(name, value)
 end subroutine paramcard_set_s
 
 subroutine paramcard_set_i(name, value)
     !! Set an integer parameter.
-    use paramcard, only: set_param
+    use paramcard, only: paramcard_set_f90 => paramcard_set
     implicit none
 
     character(len=*), intent(in) :: name
@@ -1316,12 +1315,12 @@ subroutine paramcard_set_i(name, value)
     integer, intent(in) :: value
         !! The value to be set.
 
-    call set_param(name, value)
+    call paramcard_set_f90(name, value)
 end subroutine paramcard_set_i
 
 subroutine paramcard_set_r(name, value)
     !! Set a real parameter.
-    use paramcard, only: set_param
+    use paramcard, only: paramcard_set_f90 => paramcard_set
     implicit none
 
     character(len=*), intent(in) :: name
@@ -1329,12 +1328,12 @@ subroutine paramcard_set_r(name, value)
     real, intent(in) :: value
         !! The value to be set.
 
-    call set_param(name, value)
+    call paramcard_set_f90(name, value)
 end subroutine paramcard_set_r
 
 subroutine paramcard_set_d(name, value)
-    !! Set a (double precision) real parameter.
-    use paramcard, only: set_param
+    !! Set a (double-precision) real parameter.
+    use paramcard, only: paramcard_set_f90 => paramcard_set
     implicit none
 
     character(len=*), intent(in) :: name
@@ -1342,13 +1341,13 @@ subroutine paramcard_set_d(name, value)
     double precision, intent(in) :: value
         !! The value to be set.
 
-    call set_param(name, value)
+    call paramcard_set_f90(name, value)
 end subroutine paramcard_set_d
 
 subroutine paramcard_summary
     !! Write the parameter summary.
-    use paramcard, only: write_param_summary
+    use paramcard, only: paramcard_summary_f90 => paramcard_summary
     implicit none
 
-    call write_param_summary
+    call paramcard_summary_f90
 end subroutine paramcard_summary

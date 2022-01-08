@@ -16,12 +16,12 @@ contains
                     new_unittest('is_close_real32', test_is_close_real32), &
                     new_unittest('is_close_real64', test_is_close_real64), &
                     new_unittest('remove_spaces', test_remove_spaces), &
-                    new_unittest('to_str_int8', test_to_str_int8), &
-                    new_unittest('to_str_int16', test_to_str_int16), &
-                    new_unittest('to_str_int32', test_to_str_int32), &
-                    new_unittest('to_str_int64', test_to_str_int64), &
-                    new_unittest('to_str_real32', test_to_str_real32), &
-                    new_unittest('to_str_real64', test_to_str_real64), &
+                    new_unittest('to_string_int8', test_to_string_int8), &
+                    new_unittest('to_string_int16', test_to_string_int16), &
+                    new_unittest('to_string_int32', test_to_string_int32), &
+                    new_unittest('to_string_int64', test_to_string_int64), &
+                    new_unittest('to_string_real32', test_to_string_real32), &
+                    new_unittest('to_string_real64', test_to_string_real64), &
                     new_unittest('to_upper', test_to_upper) &
                     ]
     end subroutine collect_test_paramcard_util
@@ -62,79 +62,79 @@ contains
         if (allocated(error)) return
     end subroutine test_remove_spaces
 
-    subroutine test_to_str_int8(error)
+    subroutine test_to_string_int8(error)
         type(error_type), allocatable, intent(out) :: error
 
         character(len=:), allocatable :: s
         integer(kind=int8) :: x, y
 
         x = 123_int8
-        s = to_str(x)
+        s = to_string(x)
         call check(error, s, '123')
         if (allocated(error)) return
 
         x = -123_int8
-        s = to_str(x)
+        s = to_string(x)
         read (s, *) y
         call check(error, x, y)
         if (allocated(error)) return
-    end subroutine test_to_str_int8
+    end subroutine test_to_string_int8
 
-    subroutine test_to_str_int16(error)
+    subroutine test_to_string_int16(error)
         type(error_type), allocatable, intent(out) :: error
 
         character(len=:), allocatable :: s
         integer(kind=int16) :: x, y
 
         x = 123_int16
-        s = to_str(x)
+        s = to_string(x)
         call check(error, s, '123')
         if (allocated(error)) return
 
         x = -123_int16
-        s = to_str(x)
+        s = to_string(x)
         read (s, *) y
         call check(error, x, y)
         if (allocated(error)) return
-    end subroutine test_to_str_int16
+    end subroutine test_to_string_int16
 
-    subroutine test_to_str_int32(error)
+    subroutine test_to_string_int32(error)
         type(error_type), allocatable, intent(out) :: error
 
         character(len=:), allocatable :: s
         integer(kind=int32) :: x, y
 
         x = 123_int32
-        s = to_str(x)
+        s = to_string(x)
         call check(error, s, '123')
         if (allocated(error)) return
 
         x = -123_int32
-        s = to_str(x)
+        s = to_string(x)
         read (s, *) y
         call check(error, x, y)
         if (allocated(error)) return
-    end subroutine test_to_str_int32
+    end subroutine test_to_string_int32
 
-    subroutine test_to_str_int64(error)
+    subroutine test_to_string_int64(error)
         type(error_type), allocatable, intent(out) :: error
 
         character(len=:), allocatable :: s
         integer(kind=int64) :: x, y
 
         x = 123_int64
-        s = to_str(x)
+        s = to_string(x)
         call check(error, s, '123')
         if (allocated(error)) return
 
         x = -123_int64
-        s = to_str(x)
+        s = to_string(x)
         read (s, *) y
         call check(error, x, y)
         if (allocated(error)) return
-    end subroutine test_to_str_int64
+    end subroutine test_to_string_int64
 
-    subroutine test_to_str_real32(error)
+    subroutine test_to_string_real32(error)
         type(error_type), allocatable, intent(out) :: error
 
         character(len=:), allocatable :: s
@@ -142,13 +142,13 @@ contains
 
         x = 3
         x = 1 / x
-        s = to_str(x)
+        s = to_string(x)
         read (s, *) y
         call check(error, is_close(x, y))
         if (allocated(error)) return
-    end subroutine test_to_str_real32
+    end subroutine test_to_string_real32
 
-    subroutine test_to_str_real64(error)
+    subroutine test_to_string_real64(error)
         type(error_type), allocatable, intent(out) :: error
 
         character(len=:), allocatable :: s
@@ -156,11 +156,11 @@ contains
 
         x = 3
         x = 1 / x
-        s = to_str(x)
+        s = to_string(x)
         read (s, *) y
         call check(error, is_close(x, y))
         if (allocated(error)) return
-    end subroutine test_to_str_real64
+    end subroutine test_to_string_real64
 
     subroutine test_to_upper(error)
         type(error_type), allocatable, intent(out) :: error
