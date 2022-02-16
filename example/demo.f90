@@ -8,8 +8,8 @@ program demo
 
     call paramcard_get('a', a, 1)
     call paramcard_get('b', b, 2)
-    call paramcard_get('x', x, 0.3d0)
-    call paramcard_get('y', y, 0.4d0)
+    call paramcard_get('x', x, 0.3_dp)
+    call paramcard_get('y', y, 0.4_dp)
     call paramcard_get('msg', msg, '')
     call paramcard_summary
 
