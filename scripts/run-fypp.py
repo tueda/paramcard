@@ -6,6 +6,7 @@
 #   python >= 3.6, fprettify >= 0.3.7, fypp >= 3.1.
 #
 """:" .
+
 exec python3 "$0" "$@"
 """
 
@@ -17,7 +18,7 @@ import re
 import shutil
 import subprocess
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
 ROOT_PATH = Path(__file__).resolve().parent.parent
 
@@ -51,7 +52,7 @@ def guess_file(path: Path) -> str:
     """Guess the type of a file and return the corresponding file extension."""
     lines = path.read_text().splitlines()
 
-    MAX_LINES = 500
+    MAX_LINES = 500  # noqa: N806
 
     f77ish = True
     f90ish = False

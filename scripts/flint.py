@@ -14,6 +14,7 @@
 #   python >= 3.6.
 #
 """:" .
+
 exec python3 "$0" "$@"
 """
 import re
@@ -33,16 +34,17 @@ failed = False  # TODO: don't use global.
 def error_line(
     filename: str, lineno: int, start: int, end: int, line: str, message: str
 ) -> None:
+    """Print a line where an error occurred."""
     global failed
 
-    INDENT = "    "
-    SPACE = " "
-    MARK = "^"
-    LEFT_ELLIPSIS = "... "
-    RIGHT_ELLIPSIS = " ..."
+    INDENT = "    "  # noqa: N806
+    SPACE = " "  # noqa: N806
+    MARK = "^"  # noqa: N806
+    LEFT_ELLIPSIS = "... "  # noqa: N806
+    RIGHT_ELLIPSIS = " ..."  # noqa: N806
 
-    MAX_LINE = 79 - len(INDENT) - len(LEFT_ELLIPSIS) - len(RIGHT_ELLIPSIS)
-    LEFT_MARGIN = 15
+    MAX_LINE = 79 - len(INDENT) - len(LEFT_ELLIPSIS) - len(RIGHT_ELLIPSIS)  # noqa: N806
+    LEFT_MARGIN = 15  # noqa: N806
 
     failed = True
 
@@ -113,9 +115,9 @@ def process_line(filename: str, lineno: int, line: str) -> None:
 
 def check_vertical_blanks(filename: str, lines: Sequence[str]) -> None:
     """Check vertical blank lines in the source."""
-    NONE = 0
-    BEGIN = 1
-    END = 2
+    NONE = 0  # noqa: N806
+    BEGIN = 1  # noqa: N806
+    END = 2  # noqa: N806
 
     previous = NONE
     n_blanks = 0
@@ -155,7 +157,7 @@ def check_vertical_blanks(filename: str, lines: Sequence[str]) -> None:
 
         if n_blanks == 2:
             error_line(
-                filename, lineno, 0, max(len(line), 1), line, f"too many blank lines"
+                filename, lineno, 0, max(len(line), 1), line, "too many blank lines"
             )
 
 
@@ -171,7 +173,6 @@ def process_file(path: Path) -> None:
 
 def main() -> None:
     """Entry point."""
-
     source_files = sys.argv[1:]
 
     if not source_files:
