@@ -1,12 +1,16 @@
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.0.1
+    rev: v4.1.0
     hooks:
+    -   id: check-added-large-files
     -   id: check-case-conflict
     -   id: check-merge-conflict
     -   id: check-symlinks
+    -   id: check-toml
     -   id: check-yaml
+    -   id: debug-statements
     -   id: end-of-file-fixer
+    -   id: mixed-line-ending
     -   id: trailing-whitespace
 
 -   repo: https://github.com/pseewald/fprettify
@@ -41,6 +45,16 @@ repos:
     -   id: fprettify
         files: '\.f90|\.F90$'
 
+-   repo: https://github.com/psf/black
+    rev: 22.1.0
+    hooks:
+    -   id: black
+
+-   repo: https://github.com/timothycrosley/isort
+    rev: 5.10.1
+    hooks:
+    -   id: isort
+
 -   repo: https://github.com/editorconfig-checker/editorconfig-checker.python
     rev: 2.4.0
     hooks:
@@ -54,6 +68,27 @@ repos:
         name: Check .editorconfig rules (Fortran)
         files: '.*(\.f|\.F|\.f90|\.F90)$'
         args: [-disable-indentation]
+
+-   repo: https://gitlab.com/pycqa/flake8
+    rev: 3.9.2
+    hooks:
+    -   id: flake8
+        entry: pflake8
+        additional_dependencies:
+        -   flake8-bandit==2.1.2
+        -   flake8-bugbear==22.1.11
+        -   flake8-builtins==1.5.3
+        -   flake8-comprehensions==3.8.0
+        -   flake8-docstrings==1.6.0
+        -   flake8-pytest-style==1.6.0
+        -   pep8-naming==0.12.1
+        -   pyproject-flake8==0.0.1a2
+
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v0.931
+    hooks:
+    -   id: mypy
+        args: []
 
 -   repo: https://github.com/jorisroovers/gitlint
     rev: v0.17.0

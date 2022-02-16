@@ -1,0 +1,16 @@
+[tool.flake8]
+max-line-length = 88
+extend-ignore = [
+  "E203", "W503", # for black
+  "S404", # import_subprocess
+  "S603", # subprocess_without_shell_equals_true
+]
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+pretty = true
+show_error_codes = true
+strict = true
+warn_unreachable = true
