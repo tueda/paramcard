@@ -1,5 +1,13 @@
 # Changelog
 
+<a name="0.2.1"></a>
+## [0.2.1] (2022-03-15)
+
+### Fixed
+- Forgotten library initialization in `paramcard_set` and `paramcard_summary`.
+  ([#3](https://github.com/tueda/paramcard/issues/3), [#4](https://github.com/tueda/paramcard/issues/4))
+
+
 <a name="0.2.0"></a>
 ## [0.2.0] (2022-02-16)
 
@@ -22,4 +30,5 @@
 - First version.
 
 
+[0.2.1]: https://github.com/tueda/paramcard/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/tueda/paramcard/compare/v0.1.0...v0.2.0
