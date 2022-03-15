@@ -1,3 +1,5 @@
+#! This file is included from other *.fypp files.
+#!
 #:mute
 
 #:set INT_KINDS = ['int8', 'int16', 'int32', 'int64']

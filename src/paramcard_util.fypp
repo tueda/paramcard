@@ -1,0 +1,135 @@
+#! This file is included from paramcard.fypp.
+#!
+module paramcard_util
+    !! This module contains utility routines.
+
+    use, intrinsic :: iso_fortran_env, only: int8, int16, int32, int64, real32, real64
+    implicit none
+    private
+
+    public is_close
+    public remove_spaces
+    public to_string
+    public to_upper
+
+    interface is_close
+        !! Return true if two values are close to each other.
+#:for k in REAL_KINDS
+        module procedure is_close_${k}$
+#:endfor
+    end interface is_close
+
+    interface to_string
+        !! Return the string representation of the given value.
+#:for k in INT_KINDS + REAL_KINDS
+        module procedure to_string_${k}$
+#:endfor
+    end interface to_string
+
+    integer, parameter :: MAX_BUF = 50
+    integer, parameter :: DEFAULT_EPSILON_COEFF = 100
+
+contains
+
+#:for k in REAL_KINDS
+    pure function is_close_${k}$ (a, b, rel_tol, abs_tol) result(res)
+        !! Return true if `a` and `b` are close to each other.
+
+        ${type(k)}$, intent(in) :: a
+            !! The first number.
+        ${type(k)}$, intent(in) :: b
+            !! The second number.
+        ${type(k)}$, optional, intent(in) :: rel_tol
+            !! The relative tolerance.
+        ${type(k)}$, optional, intent(in) :: abs_tol
+            !! The absolute tolerance.
+        logical :: res
+            !! The result.
+
+        ${type(k)}$::rtol,atol
+
+        if (present(rel_tol)) then
+            rtol = abs(rel_tol)
+        else
+            rtol = DEFAULT_EPSILON_COEFF * epsilon(rtol)
+        end if
+
+        if (present(abs_tol)) then
+            atol = abs(abs_tol)
+        else
+            atol = 0
+        end if
+
+        res = abs(a - b) <= max(rtol * max(abs(a), abs(b)), atol)
+    end function is_close_${k}$
+
+#:endfor
+    pure function remove_spaces(str) result(res)
+        !! Remove whitespace in the given string.
+
+        character(len=*), intent(in) :: str
+            !! The string.
+        character(len=:), allocatable :: res
+            !! The string without spaces.
+
+        character(len=len_trim(str)) :: tmp
+        integer :: i, j, c
+
+        tmp = adjustl(str)
+
+        j = 0
+
+        do i = 1, len_trim(tmp)
+            c = iachar(tmp(i:i))
+            if ((c == int(z'20')) .or. (c >= int(z'09') .and. c <= int(z'0D'))) then
+                cycle
+            end if
+            j = j + 1
+            tmp(j:j) = tmp(i:i)
+        end do
+
+        if (j == 0) then
+            res = ''
+        else
+            res = tmp(1:j)
+        end if
+    end function remove_spaces
+
+#:for k in INT_KINDS + REAL_KINDS
+    pure function to_string_${k}$ (value) result(res)
+        !! Return the string representation of the given value.
+
+        ${type(k)}$, intent(in) :: value
+            !! The value.
+        character(len=:), allocatable :: res
+            !! The string representation.
+
+        character(len=MAX_BUF) :: tmp
+
+        write (tmp, *) value
+        res = trim(adjustl(tmp))
+    end function to_string_${k}$
+
+#:endfor
+    pure function to_upper(str) result(res)
+        !! Convert a string into uppercase.
+
+        character(len=*), intent(in) :: str
+            !! The string to be converted.
+        character(len=len(str)) :: res
+            !! The converted uppercase string.
+
+        integer :: i, c
+
+        res = str
+
+        do i = 1, len_trim(res)
+            c = iachar(res(i:i))
+            select case (c)
+            case (97:122)
+                res(i:i) = achar(c - 32)
+            end select
+        end do
+    end function to_upper
+
+end module paramcard_util

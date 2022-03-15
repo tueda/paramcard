@@ -1,0 +1,77 @@
+#! This file is included from paramcard.fypp.
+#!
+! Old-fashioned FORTRAN interface,
+! though subroutine names are longer than 6 characters.
+
+#:for k in ['s', 'i', 'r', 'd']
+subroutine paramcard_get_${k}$ (name, variable, default_value)
+#:if k == 's'
+    !! Retrieve a string parameter.
+#:elif k == 'i'
+    !! Retrieve an integer parameter.
+#:elif k == 'r'
+    !! Retrieve a real parameter.
+#:elif k == 'd'
+    !! Retrieve a (double-precision) real parameter.
+#:endif
+    use paramcard, only: paramcard_get_f90 => paramcard_get
+    implicit none
+
+    character(len=*), intent(in) :: name
+        !! The name of the parameter.
+    ${type(k)}$, intent(out) :: variable
+        !! The variable to store the parameter value.
+    ${type(k)}$, intent(in) :: default_value
+        !! The value to be used if the parameter not found.
+
+#:if k == 's'
+    call paramcard_get_f90(len(variable), name, variable, default_value)
+#:else
+    call paramcard_get_f90(name, variable, default_value)
+#:endif
+end subroutine paramcard_get_${k}$
+
+#:endfor
+#:for k in ['s', 'i', 'r', 'd']
+subroutine paramcard_set_${k}$ (name, value)
+#:if k == 's'
+    !! Set a string parameter.
+#:elif k == 'i'
+    !! Set an integer parameter.
+#:elif k == 'r'
+    !! Set a real parameter.
+#:elif k == 'd'
+    !! Set a (double-precision) real parameter.
+#:endif
+    use paramcard, only: paramcard_set_f90 => paramcard_set
+    implicit none
+
+    character(len=*), intent(in) :: name
+        !! The name of the parameter.
+    ${type(k)}$, intent(in) :: value
+        !! The value to be set.
+
+    call paramcard_set_f90(name, value)
+end subroutine paramcard_set_${k}$
+
+#:endfor
+subroutine paramcard_summary
+    !! Write the parameter summary.
+    use paramcard, only: paramcard_summary_f90 => paramcard_summary
+    implicit none
+
+    call paramcard_summary_f90
+end subroutine paramcard_summary
+
+subroutine paramcard_output(file_param, format_param)
+    !! Write output to a file with a format, which are specified as parameters.
+    use paramcard, only: paramcard_output_f90 => paramcard_output
+    implicit none
+
+    character(len=*), intent(in) :: file_param
+        !! The parameter to specify the output file.
+    character(len=*), intent(in) :: format_param
+        !! The parameter to specify the output format.
+
+    call paramcard_output_f90(file_param, format_param)
+end subroutine paramcard_output

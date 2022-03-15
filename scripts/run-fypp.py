@@ -24,7 +24,7 @@ ROOT_PATH = Path(__file__).resolve().parent.parent
 
 VERSIONED_FILES = ("paramcard.fypp",)
 INCLUDE_DIRS = ("src",)
-IGNORE_FILES = ("common.fypp",)
+IGNORE_FILES = ("common.fypp", "paramcard_f77.fypp", "paramcard_util.fypp")
 
 MAIN_FILE = "src/paramcard.f90"
 VERSION = "x.y.z-dev"
