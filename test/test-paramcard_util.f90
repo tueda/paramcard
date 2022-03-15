@@ -1,3 +1,5 @@
+! Code generated from test-paramcard_util.fypp; DO NOT EDIT.
+
 module test_paramcard_util
     use, intrinsic :: iso_fortran_env, only: int8, int16, int32, int64, real32, real64
     use testdrive, only: new_unittest, unittest_type, error_type, check

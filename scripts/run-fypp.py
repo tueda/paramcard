@@ -141,9 +141,12 @@ def main() -> None:
             subprocess.run([fprettify_bin, output_path], check=True)
 
         new_output = output_path.read_text()
+        new_output = (
+            f"! Code generated from {source_path.name}; DO NOT EDIT.\n\n" + new_output
+        )
         if source_path.name in VERSIONED_FILES:
             new_output = file_header(output_path) + new_output
-            output_path.write_text(new_output)
+        output_path.write_text(new_output)
         if old_output != new_output:
             print(f"{source_path} -> {output_path}")
             nchanged += 1

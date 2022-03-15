@@ -25,6 +25,8 @@
 ! OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ! SOFTWARE.
 
+! Code generated from paramcard.fypp; DO NOT EDIT.
+
 module paramcard_util
     !! This module contains utility routines.
 

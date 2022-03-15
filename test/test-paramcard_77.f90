@@ -1,3 +1,5 @@
+! Code generated from test-paramcard_77.fypp; DO NOT EDIT.
+
 module test_paramcard_77
     use testdrive, only: new_unittest, unittest_type, error_type, check
     use test_util

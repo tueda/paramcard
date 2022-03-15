@@ -1,3 +1,5 @@
+! Code generated from test_util.fypp; DO NOT EDIT.
+
 module test_util
     !! Helper routines for testing.
 
