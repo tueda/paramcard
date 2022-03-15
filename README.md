@@ -56,22 +56,22 @@ msg = Hello
 
 The library works with Fortran 2008 compliant compilers.
 Because this is a single-file library, one can just copy a MIT-licensed file
-[`paramcard.f90`](https://raw.githubusercontent.com/tueda/paramcard/v0.2.0/src/paramcard.f90)
+[`paramcard.f90`](https://raw.githubusercontent.com/tueda/paramcard/v0.2.1/src/paramcard.f90)
 to one's project:
 ```bash
-curl -O https://raw.githubusercontent.com/tueda/paramcard/v0.2.0/src/paramcard.f90
+curl -O https://raw.githubusercontent.com/tueda/paramcard/v0.2.1/src/paramcard.f90
 ```
 Alternatively, one can use this repository as a submodule of one's Git repository:
 ```bash
 git submodule add https://github.com/tueda/paramcard.git extern/paramcard
-git -C extern/paramcard checkout v0.2.0
+git -C extern/paramcard checkout v0.2.1
 ```
 which makes the library source available at `extern/paramcard/src/paramcard.f90`.
 
 Integration with [`fpm`](https://github.com/fortran-lang/fpm) is also available:
 ```toml
 [dependencies]
-paramcard = { git = "https://github.com/tueda/paramcard", tag = "v0.2.0" }
+paramcard = { git = "https://github.com/tueda/paramcard", tag = "v0.2.1" }
 ```
 
 [CMake](https://cmake.org/) (v3.14+) integration with the [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) module:
@@ -82,7 +82,7 @@ include(FetchContent)
 FetchContent_Declare(
   paramcard
   GIT_REPOSITORY https://github.com/tueda/paramcard.git
-  GIT_TAG        v0.2.0
+  GIT_TAG        v0.2.1
 )
 FetchContent_MakeAvailable(paramcard)
 if(paramcard_POPULATED)
