@@ -730,6 +730,8 @@ contains
             prefix_ = ''
         end if
 
+        call init
+
         do i = 1, n_logs
             if (only_changed_) then
                 if (.not. allocated(logs(i)%default_value)) then
@@ -823,6 +825,10 @@ contains
         if (len(name_) == 0) then
             write (error_unit, '(a)') '[ERROR] paramcard: empty parameter name: value = '//value_
             error stop
+        end if
+
+        if (.not. inited) then ! this check avoids possible recursion
+            call init
         end if
 
         i = find_param(name_)
@@ -925,6 +931,8 @@ contains
         character(len=:), allocatable :: result, canon_name, upper_name
         integer :: i, j, start, end
 
+        call init
+
         result = ''
 
         start = 0
@@ -996,6 +1004,9 @@ contains
             format_param_ = 'output_format'
         end if
 
+        ! NOTE: "call init" is not necessary because this procedure uses other
+        ! public procedures to access the stored parameters.
+
         if (file_param_ == '' .or. format_param_ == '') then
             return
         end if
@@ -1055,6 +1066,8 @@ contains
             return
         end if
 
+        inited = .true.
+
         n_params = 0
         params_capacity = INITIAL_CAPACITY
         allocate (params(params_capacity))
@@ -1064,8 +1077,6 @@ contains
         allocate (logs(logs_capacity))
 
         call parse_arguments
-
-        inited = .true.
     end subroutine init
 
     subroutine clear
@@ -1107,7 +1118,7 @@ contains
         end do
     end subroutine parse_arguments
 
-    recursive subroutine parse_line(line, enable_load)
+    subroutine parse_line(line, enable_load)
         !! Parse a string containing `'NAME = VALUE'`.
 
         character(len=*), intent(in) :: line
