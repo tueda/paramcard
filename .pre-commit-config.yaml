@@ -1,6 +1,6 @@
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.1.0
+    rev: v4.2.0
     hooks:
     -   id: check-added-large-files
     -   id: check-case-conflict
@@ -54,7 +54,7 @@ repos:
         files: '\.f90|\.F90$'
 
 -   repo: https://github.com/psf/black
-    rev: 22.1.0
+    rev: 22.3.0
     hooks:
     -   id: black
 
@@ -84,16 +84,16 @@ repos:
         entry: pflake8
         additional_dependencies:
         -   flake8-bandit==3.0.0
-        -   flake8-bugbear==22.1.11
+        -   flake8-bugbear==22.4.25
         -   flake8-builtins==1.5.3
-        -   flake8-comprehensions==3.8.0
+        -   flake8-comprehensions==3.9.0
         -   flake8-docstrings==1.6.0
         -   flake8-pytest-style==1.6.0
         -   pep8-naming==0.12.1
-        -   pyproject-flake8==0.0.1a2
+        -   pyproject-flake8==0.0.1a4
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.940
+    rev: v0.950
     hooks:
     -   id: mypy
         args: []
