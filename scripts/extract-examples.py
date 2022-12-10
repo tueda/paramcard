@@ -72,7 +72,7 @@ def main() -> None:
         # When no files are given, search for all Markdown files.
         source_files = tuple(ROOT_PATH.glob("*.md"))
 
-    output_dir = args.dir  # type: Optional[Path]
+    output_dir: Optional[Path] = args.dir
 
     if not output_dir:
         output_dir = DEFAULT_EXAMPLE_PATH
