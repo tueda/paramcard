@@ -1025,7 +1025,7 @@ contains
             write (error_unit, '(a)') '[ERROR] paramcard: failed to open: '//file
             error stop
         end if
-        write (lun, '(a)'), output
+        write (lun, '(a)') output
         close (lun)
     end subroutine paramcard_output
 
