@@ -39,7 +39,7 @@ and the (optional) default value, respectively.
 The `paramcard_summary` subroutine prints the summary of the input parameters and
 checks if there are any given parameters that are actually unused in the program.
 The compiled program will accept command-line arguments like
-`./demo a=101 x=0.6 msg=Hello`, where parameters are overridden in the form of
+`./demo a=101 x=0.6 msg='Hello, World!'`, where parameters are overridden in the form of
 `name=value`. Parameter names are case- and space-insensitive.
 It is also possible to pass parameters via input text files like
 `./demo input.txt`.
@@ -48,7 +48,18 @@ An example of an input file is as follows:
 # Comment lines start with "#" or "!".
 a = 101
 x = 0.6
-msg = Hello
+msg = Hello, World!
+```
+The output of the above example looks as follows:
+```
+a = 101 (default: 1)
+b = 2
+x = 0.59999999999999998 (default: 0.29999999999999999)
+y = 0.40000000000000002
+msg = Hello, World! (default: )
+ a + b =          103
+ x + y =    1.0000000000000000
+ Hello, World!
 ```
 
 
