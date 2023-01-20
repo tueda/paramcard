@@ -93,7 +93,7 @@ include(FetchContent)
 FetchContent_Declare(
   paramcard
   GIT_REPOSITORY https://github.com/tueda/paramcard.git
-  GIT_TAG        v0.2.1
+  GIT_TAG v0.2.1
 )
 FetchContent_MakeAvailable(paramcard)
 if(paramcard_POPULATED)
@@ -104,6 +104,21 @@ endif()
 target_link_libraries(main PRIVATE paramcard)
 ```
 
+Integration with [`CPM.cmake`](https://github.com/cpm-cmake/CPM.cmake):
+```cmake
+CPMAddPackage(
+  NAME paramcard
+  GIT_REPOSITORY https://github.com/tueda/paramcard
+  VERSION 0.2.1
+  DOWNLOAD_ONLY YES
+)
+if (paramcard_ADDED)
+  add_library(paramcard STATIC ${paramcard_SOURCE_DIR}/src/paramcard.f90)
+endif()
+```
+```cmake
+target_link_libraries(main PRIVATE paramcard)
+```
 
 ## API
 

@@ -51,10 +51,11 @@ function version_bump() {
   sed -i "s|https://raw.githubusercontent.com/tueda/paramcard/.*/src|https://raw.githubusercontent.com/tueda/paramcard/$v$1/src|" README.md
   sed -i "s|git -C extern/paramcard checkout.*|git -C extern/paramcard checkout $v$1|" README.md
   sed -i "s|git = \"https://github.com/tueda/paramcard\", tag = \".*\"|git = \"https://github.com/tueda/paramcard\", tag = \"$v$1\"|" README.md
-  sed -i "s|GIT_TAG.*|GIT_TAG        $v$1|" README.md
+  sed -i "s|GIT_TAG.*|GIT_TAG $v$1|" README.md
+  sed -i "s|VERSION.*|VERSION $1|" README.md
   # Check if the files are changed.
   [[ $(numstat fpm.toml) == '1,1' ]]
-  [[ $(numstat README.md) == '5,5' ]]
+  [[ $(numstat README.md) == '6,6' ]]
 }
 
 # dev_version_bump <dev_version_number>: a hook function to bump the version for code.
