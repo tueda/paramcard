@@ -1,5 +1,13 @@
 # Changelog
 
+<a name="0.2.2"></a>
+## [0.2.2] (2023-01-20)
+
+### Fixed
+- Remove GNU Fortran warning "Legacy Extension: Comma before i/o item list".
+  ([509ebd1](https://github.com/tueda/paramcard/commit/509ebd1bc01e8331c6a816c2338ee2d95b9d0dbe))
+
+
 <a name="0.2.1"></a>
 ## [0.2.1] (2022-03-15)
 
@@ -30,5 +38,6 @@
 - First version.
 
 
+[0.2.2]: https://github.com/tueda/paramcard/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/tueda/paramcard/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/tueda/paramcard/compare/v0.1.0...v0.2.0
