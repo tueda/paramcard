@@ -1,10 +1,11 @@
 name: Test
 
 on:
-  push:
   pull_request:
+  push:
   schedule:
-    - cron: 0 0 1 * * # monthly
+    - cron: '0 0 1 * *' # monthly
+  workflow_dispatch:
 
 jobs:
   test:
@@ -12,12 +13,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { os: ubuntu-18.04, compiler: gcc, version: 5 }
-          - { os: ubuntu-18.04, compiler: gcc, version: 6 }
-          - { os: ubuntu-18.04, compiler: gcc, version: 7 }
-          - { os: ubuntu-18.04, compiler: gcc, version: 8 }
-          - { os: ubuntu-20.04, compiler: gcc, version: 9 }
-          - { os: ubuntu-20.04, compiler: gcc, version: 10 }
+          - { os: ubuntu-20.04, compiler: gcc, version: 7 }
+          - { os: ubuntu-20.04, compiler: gcc, version: 8 }
+          - { os: ubuntu-22.04, compiler: gcc, version: 9 }
+          - { os: ubuntu-22.04, compiler: gcc, version: 10 }
           - { os: ubuntu-22.04, compiler: gcc, version: 11, build-type: coverage }
           - { os: ubuntu-22.04, compiler: gcc, version: 12 }
 
@@ -27,7 +26,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Fortran
-        uses: awvwgk/setup-fortran@main
+        uses: awvwgk/setup-fortran@v1
         id: setup-fortran
         with:
           compiler: ${{ matrix.compiler }}
@@ -39,9 +38,7 @@ jobs:
           fpm-version: v0.7.0
 
       - name: Print compiler version
-        if: matrix.compiler == 'gcc'
-        run:
-          gfortran --version
+        run: $FC --version
 
       - name: Run test
         if: matrix.build-type != 'coverage'
@@ -62,3 +59,56 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
+
+  # For old compilers.
+  test-on-container:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { image: 'ubuntu:16.04', compiler: gcc, version: 4.9 }
+          - { image: 'ubuntu:18.04', compiler: gcc, version: 5 }
+          - { image: 'ubuntu:18.04', compiler: gcc, version: 6 }
+
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ matrix.image }}
+      # See: https://github.com/orgs/community/discussions/53771
+      volumes:
+        - /home/runner/work/_actions/awvwgk/setup-fortran/v1:/home/runner/work/_actions/awvwgk/setup-fortran/v1
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
+      # awvwgk/setup-fortran requires sudo on Ubuntu.
+      - name: Create a dummy sudo
+        run: |
+          mkdir -p bin
+          echo '#!/bin/sh' >bin/sudo
+          echo '"$@"' >>bin/sudo
+          chmod +x bin/sudo
+          echo "$(cd bin && pwd)" >>$GITHUB_PATH
+
+      # awvwgk/setup-fortran requires add-apt-repository and fpm requires git.
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git software-properties-common
+
+      - name: Set up Fortran
+        uses: awvwgk/setup-fortran@v1
+        id: setup-fortran
+        with:
+          compiler: ${{ matrix.compiler }}
+          version: ${{ matrix.version }}
+
+      - name: Set up fpm
+        uses: fortran-lang/setup-fpm@v5
+        with:
+          fpm-version: v0.7.0
+
+      - name: Print compiler version
+        run: $FC --version
+
+      - name: Run test
+        run: fpm test

@@ -106,6 +106,6 @@ repos:
         args: []
 
 -   repo: https://github.com/jorisroovers/gitlint
-    rev: v0.19.0dev
+    rev: v0.19.1
     hooks:
     -   id: gitlint
