@@ -61,7 +61,7 @@ repos:
         files: '\.f90|\.F90$'
 
 -   repo: https://github.com/psf/black
-    rev: 23.1.0
+    rev: 23.3.0
     hooks:
     -   id: black
 
@@ -100,7 +100,7 @@ repos:
         -   pyproject-flake8==6.0.0
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.0.0
+    rev: v1.3.0
     hooks:
     -   id: mypy
         args: []
