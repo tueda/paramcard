@@ -61,7 +61,7 @@ repos:
         files: '\.f90|\.F90$'
 
 -   repo: https://github.com/psf/black
-    rev: 23.3.0
+    rev: 23.7.0
     hooks:
     -   id: black
 
@@ -71,13 +71,13 @@ repos:
     -   id: isort
 
 -   repo: https://github.com/editorconfig-checker/editorconfig-checker.python
-    rev: 2.7.1
+    rev: 2.7.2
     hooks:
     -   id: editorconfig-checker
         exclude: '.*(\.f|\.F|\.f90|\.F90)$'
 
 -   repo: https://github.com/editorconfig-checker/editorconfig-checker.python
-    rev: 2.7.1
+    rev: 2.7.2
     hooks:
     -   id: editorconfig-checker
         name: Check .editorconfig rules (Fortran)
@@ -85,22 +85,22 @@ repos:
         args: [-disable-indentation]
 
 -   repo: https://github.com/PyCQA/flake8
-    rev: 6.0.0
+    rev: 6.1.0
     hooks:
     -   id: flake8
         entry: pflake8
         additional_dependencies:
         -   flake8-bandit==4.1.1
-        -   flake8-bugbear==23.1.20
+        -   flake8-bugbear==23.7.10
         -   flake8-builtins==2.1.0
-        -   flake8-comprehensions==3.10.1
+        -   flake8-comprehensions==3.14.0
         -   flake8-docstrings==1.7.0
-        -   flake8-pytest-style==1.7.0
+        -   flake8-pytest-style==1.7.2
         -   pep8-naming==0.13.3
-        -   pyproject-flake8==6.0.0
+        -   pyproject-flake8==6.0.0a1  # frozen for flake8 6.x
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.3.0
+    rev: v1.4.1
     hooks:
     -   id: mypy
         args: []
