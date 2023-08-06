@@ -1,6 +1,6 @@
 ! @file paramcard.f90
 !
-! Version 0.2.3
+! Version 0.2.4-dev
 !
 ! See: https://github.com/tueda/paramcard
 ! Licensed under the MIT License.
