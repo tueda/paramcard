@@ -1,5 +1,17 @@
 # Changelog
 
+<a name="0.2.3"></a>
+## [0.2.3] (2023-08-06)
+
+### BREAKING CHANGE
+
+- Old versions of `fpm < 0.8.0` are incompatible with this version.
+
+### Changed
+- Support `fpm >= 0.8.0`.
+  ([#5](https://github.com/tueda/paramcard/issues/5))
+
+
 <a name="0.2.2"></a>
 ## [0.2.2] (2023-01-20)
 
@@ -38,6 +50,7 @@
 - First version.
 
 
+[0.2.3]: https://github.com/tueda/paramcard/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/tueda/paramcard/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/tueda/paramcard/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/tueda/paramcard/compare/v0.1.0...v0.2.0
