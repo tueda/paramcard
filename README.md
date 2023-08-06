@@ -79,7 +79,7 @@ git -C extern/paramcard checkout v0.2.2
 ```
 which makes the library source available at `extern/paramcard/src/paramcard.f90`.
 
-Integration with [`fpm`](https://github.com/fortran-lang/fpm) is also available:
+Integration with [`fpm`](https://github.com/fortran-lang/fpm) (v0.8.0+) is also available:
 ```toml
 [dependencies]
 paramcard = { git = "https://github.com/tueda/paramcard", tag = "v0.2.2" }

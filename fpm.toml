@@ -4,6 +4,11 @@ license = "MIT"
 author = "Takahiro Ueda"
 maintainer = "tueda@st.seikei.ac.jp"
 
+[fortran]
+implicit-typing = true
+implicit-external = true
+source-form = "default"
+
 [dev-dependencies]
 test-drive.git = "https://github.com/fortran-lang/test-drive"
 test-drive.tag = "v0.4.0"
