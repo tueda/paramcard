@@ -20,6 +20,8 @@ jobs:
           - { os: ubuntu-22.04, compiler: gcc, version: 11, build-type: coverage }
           - { os: ubuntu-22.04, compiler: gcc, version: 12 }
           - { os: ubuntu-22.04, compiler: gcc, version: 13 }
+          - { os: ubuntu-22.04, compiler: intel, version: '2023.2' }
+          - { os: ubuntu-22.04, compiler: intel-classic, version: '2021.9' }
 
     runs-on: ${{ matrix.os }}
     steps:
