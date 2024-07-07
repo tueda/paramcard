@@ -2,7 +2,7 @@ default_install_hook_types: [pre-commit, commit-msg]
 
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.6.0
     hooks:
     -   id: check-added-large-files
     -   id: check-case-conflict
@@ -44,7 +44,7 @@ repos:
         files: \.fypp$
         additional_dependencies:
         -   fprettify==0.3.7
-        -   fypp==3.1
+        -   fypp==3.2
 
 -   repo: local
     hooks:
@@ -61,23 +61,23 @@ repos:
         files: '\.f90|\.F90$'
 
 -   repo: https://github.com/psf/black
-    rev: 23.7.0
+    rev: 24.4.2
     hooks:
     -   id: black
 
 -   repo: https://github.com/timothycrosley/isort
-    rev: 5.12.0
+    rev: 5.13.2
     hooks:
     -   id: isort
 
 -   repo: https://github.com/editorconfig-checker/editorconfig-checker.python
-    rev: 2.7.2
+    rev: 2.7.3
     hooks:
     -   id: editorconfig-checker
         exclude: '.*(\.f|\.F|\.f90|\.F90)$'
 
 -   repo: https://github.com/editorconfig-checker/editorconfig-checker.python
-    rev: 2.7.2
+    rev: 2.7.3
     hooks:
     -   id: editorconfig-checker
         name: Check .editorconfig rules (Fortran)
@@ -85,22 +85,22 @@ repos:
         args: [-disable-indentation]
 
 -   repo: https://github.com/PyCQA/flake8
-    rev: 6.1.0
+    rev: 7.1.0
     hooks:
     -   id: flake8
         entry: pflake8
         additional_dependencies:
         -   flake8-bandit==4.1.1
-        -   flake8-bugbear==23.7.10
-        -   flake8-builtins==2.1.0
-        -   flake8-comprehensions==3.14.0
+        -   flake8-bugbear==24.4.26
+        -   flake8-builtins==2.5.0
+        -   flake8-comprehensions==3.15.0
         -   flake8-docstrings==1.7.0
-        -   flake8-pytest-style==1.7.2
-        -   pep8-naming==0.13.3
-        -   pyproject-flake8==6.0.0a1  # frozen for flake8 6.x
+        -   flake8-pytest-style==2.0.0
+        -   pep8-naming==0.14.1
+        -   pyproject-flake8==7.0.0a1  # frozen for flake8 7.x
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.4.1
+    rev: v1.10.1
     hooks:
     -   id: mypy
         args: []
