@@ -12,19 +12,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Create requirements.txt
-        uses: fertrig/create-file-action@1.0.2
+        uses: 1arp/create-a-file-action@0.4.5
         with:
-          file: "requirements.txt"
-          content: "gitlint"
+          file: 'requirements.txt'
+          content: 'gitlint'
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-          cache: "pip"
+          python-version: '3.12'
+          cache: 'pip'
 
       - name: Install dependencies
         run: pip install gitlint
@@ -36,19 +36,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Create requirements.txt
-        uses: fertrig/create-file-action@1.0.2
+        uses: 1arp/create-a-file-action@0.4.5
         with:
-          file: "requirements.txt"
-          content: "pre-commit"
+          file: 'requirements.txt'
+          content: 'pre-commit'
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-          cache: "pip"
+          python-version: '3.12'
+          cache: 'pip'
 
       - name: Run pre-commit
-        uses: pre-commit/action@v3.0.0
+        uses: pre-commit/action@v3.0.1

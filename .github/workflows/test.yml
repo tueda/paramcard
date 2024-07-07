@@ -26,10 +26,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Fortran
-        uses: awvwgk/setup-fortran@v1
+        uses: fortran-lang/setup-fortran@v1
         id: setup-fortran
         with:
           compiler: ${{ matrix.compiler }}
@@ -38,7 +38,7 @@ jobs:
       - name: Set up fpm
         uses: fortran-lang/setup-fpm@v5
         with:
-          fpm-version: v0.8.0
+          fpm-version: v0.10.1
 
       - name: Print compiler version
         run: $FC --version
@@ -59,9 +59,10 @@ jobs:
 
       - name: Upload coverage report
         if: matrix.build-type == 'coverage'
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   # For old compilers.
   test-on-container:
@@ -72,18 +73,24 @@ jobs:
           - { image: 'ubuntu:16.04', compiler: gcc, version: 4.9 }
           - { image: 'ubuntu:18.04', compiler: gcc, version: 5 }
           - { image: 'ubuntu:18.04', compiler: gcc, version: 6 }
-
     runs-on: ubuntu-latest
     container:
       image: ${{ matrix.image }}
+      # Composite actions should be manually mounted.
       # See: https://github.com/orgs/community/discussions/53771
       volumes:
-        - /home/runner/work/_actions/awvwgk/setup-fortran/v1:/home/runner/work/_actions/awvwgk/setup-fortran/v1
+        - /home/runner/work/_actions/fortran-lang/setup-fortran/v1:/home/runner/work/_actions/fortran-lang/setup-fortran/v1
+    # Workaround for checkout@v3 on containers.
+    # See: https://github.com/actions/checkout/issues/1590#issuecomment-2207052044
+    env:
+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
     steps:
+      # We need to keep using v3 on containers.
+      # See: https://github.com/actions/checkout/issues/1590#issuecomment-2207052044
       - name: Checkout the repository
         uses: actions/checkout@v3
 
-      # awvwgk/setup-fortran requires sudo on Ubuntu.
+      # fortran-lang/setup-fortran requires sudo on Ubuntu.
       - name: Create a dummy sudo
         run: |
           mkdir -p bin
@@ -92,14 +99,14 @@ jobs:
           chmod +x bin/sudo
           echo "$(cd bin && pwd)" >>$GITHUB_PATH
 
-      # awvwgk/setup-fortran requires add-apt-repository and fpm requires git.
+      # fortran-lang/setup-fortran requires add-apt-repository and fpm requires git.
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y git software-properties-common
 
       - name: Set up Fortran
-        uses: awvwgk/setup-fortran@v1
+        uses: fortran-lang/setup-fortran@v1
         id: setup-fortran
         with:
           compiler: ${{ matrix.compiler }}
@@ -108,7 +115,7 @@ jobs:
       - name: Set up fpm
         uses: fortran-lang/setup-fpm@v5
         with:
-          fpm-version: v0.8.0
+          fpm-version: v0.10.1
 
       - name: Print compiler version
         run: $FC --version
