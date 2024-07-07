@@ -1,6 +1,6 @@
 # paramcard
 
-[![Test](https://github.com/tueda/paramcard/workflows/Test/badge.svg?branch=main)](https://github.com/tueda/paramcard/actions?query=branch:main)
+[![Test](https://github.com/tueda/paramcard/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/tueda/paramcard/actions/workflows/test.yml?query=branch:main)
 [![codecov](https://codecov.io/gh/tueda/paramcard/branch/main/graph/badge.svg)](https://codecov.io/gh/tueda/paramcard)
 
 Fortran's command-line parameter input made simple.
