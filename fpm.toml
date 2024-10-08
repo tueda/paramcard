@@ -11,4 +11,4 @@ source-form = "default"
 
 [dev-dependencies]
 test-drive.git = "https://github.com/fortran-lang/test-drive"
-test-drive.tag = "v0.4.0"
+test-drive.tag = "v0.5.0"

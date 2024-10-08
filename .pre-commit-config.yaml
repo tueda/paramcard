@@ -2,7 +2,7 @@ default_install_hook_types: [pre-commit, commit-msg]
 
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v5.0.0
     hooks:
     -   id: check-added-large-files
     -   id: check-case-conflict
@@ -61,7 +61,7 @@ repos:
         files: '\.f90|\.F90$'
 
 -   repo: https://github.com/psf/black
-    rev: 24.4.2
+    rev: 24.10.0
     hooks:
     -   id: black
 
@@ -71,13 +71,13 @@ repos:
     -   id: isort
 
 -   repo: https://github.com/editorconfig-checker/editorconfig-checker.python
-    rev: 2.7.3
+    rev: 3.0.3
     hooks:
     -   id: editorconfig-checker
         exclude: '.*(\.f|\.F|\.f90|\.F90)$'
 
 -   repo: https://github.com/editorconfig-checker/editorconfig-checker.python
-    rev: 2.7.3
+    rev: 3.0.3
     hooks:
     -   id: editorconfig-checker
         name: Check .editorconfig rules (Fortran)
@@ -85,13 +85,13 @@ repos:
         args: [-disable-indentation]
 
 -   repo: https://github.com/PyCQA/flake8
-    rev: 7.1.0
+    rev: 7.1.1
     hooks:
     -   id: flake8
         entry: pflake8
         additional_dependencies:
         -   flake8-bandit==4.1.1
-        -   flake8-bugbear==24.4.26
+        -   flake8-bugbear==24.8.19
         -   flake8-builtins==2.5.0
         -   flake8-comprehensions==3.15.0
         -   flake8-docstrings==1.7.0
@@ -100,7 +100,7 @@ repos:
         -   pyproject-flake8==7.0.0a1  # frozen for flake8 7.x
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.10.1
+    rev: v1.11.2
     hooks:
     -   id: mypy
         args: []
