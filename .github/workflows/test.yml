@@ -90,7 +90,8 @@ jobs:
       - name: Install Dependencies
         env:
           SCRIPT: |
-            wget https://github.com/fortran-lang/fpm/releases/download/v0.11.0/fpm-0.11.0-linux-x86_64-gcc-12 -o fpm
+            curl -L -O https://github.com/fortran-lang/fpm/releases/download/v0.11.0/fpm-0.11.0-linux-x86_64-gcc-12
+            mv fpm-0.11.0-linux-x86_64-gcc-12 fpm
             chmod +x fpm
             mv fpm /usr/local/bin
         run: docker exec build-container bash -c "$SCRIPT"
@@ -104,5 +105,6 @@ jobs:
       - name: Run test
         env:
           SCRIPT: |
+            cd /workspace
             fpm test
         run: docker exec build-container bash -c "$SCRIPT"
