@@ -89,9 +89,11 @@ jobs:
 
       - name: Install Dependencies
         env:
+          FPM_VERSION: '0.11.0'
+          FPM_SUFFIX: '-gcc-12'
           SCRIPT: |
-            curl -L -O https://github.com/fortran-lang/fpm/releases/download/v0.11.0/fpm-0.11.0-linux-x86_64-gcc-12
-            mv fpm-0.11.0-linux-x86_64-gcc-12 fpm
+            curl -L -O https://github.com/fortran-lang/fpm/releases/download/v$FPM_VERSION/fpm-$FPM_VERSION-linux-x86_64$FPM_SUFFIX
+            mv fpm-*-linux-x86_64* fpm
             chmod +x fpm
             mv fpm /usr/local/bin
         run: docker exec build-container bash -c "$SCRIPT"
