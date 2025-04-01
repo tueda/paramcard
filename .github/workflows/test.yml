@@ -13,8 +13,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { os: ubuntu-20.04, compiler: gcc, version: 7 }
-          - { os: ubuntu-20.04, compiler: gcc, version: 8 }
           - { os: ubuntu-22.04, compiler: gcc, version: 9 }
           - { os: ubuntu-22.04, compiler: gcc, version: 10 }
           - { os: ubuntu-22.04, compiler: gcc, version: 11, build-type: coverage }
@@ -74,37 +72,20 @@ jobs:
           - { image: 'ubuntu:16.04', compiler: gcc, version: 4.9 }
           - { image: 'ubuntu:18.04', compiler: gcc, version: 5 }
           - { image: 'ubuntu:18.04', compiler: gcc, version: 6 }
+          - { image: ubuntu:20.04, compiler: gcc, version: 7 }
+          - { image: ubuntu:20.04, compiler: gcc, version: 8 }
     runs-on: ubuntu-latest
-    container:
-      image: ${{ matrix.image }}
-      # Composite actions should be manually mounted.
-      # See: https://github.com/orgs/community/discussions/53771
-      volumes:
-        - /home/runner/work/_actions/fortran-lang/setup-fortran/v1:/home/runner/work/_actions/fortran-lang/setup-fortran/v1
-    # Workaround for checkout@v3 on containers.
-    # See: https://github.com/actions/checkout/issues/1590#issuecomment-2207052044
-    env:
-      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
     steps:
-      # We need to keep using v3 on containers.
-      # See: https://github.com/actions/checkout/issues/1590#issuecomment-2207052044
       - name: Checkout the repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # fortran-lang/setup-fortran requires sudo on Ubuntu.
-      - name: Create a dummy sudo
+      # We have to manually start a container. Otherwise, GitHub-provided actions
+      # don't work properly in older OS containers.
+      # See: https://github.com/actions/checkout/issues/1590#issuecomment-2567109195
+      - name: Start Docker container
         run: |
-          mkdir -p bin
-          echo '#!/bin/sh' >bin/sudo
-          echo '"$@"' >>bin/sudo
-          chmod +x bin/sudo
-          echo "$(cd bin && pwd)" >>$GITHUB_PATH
-
-      # fortran-lang/setup-fortran requires add-apt-repository and fpm requires git.
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git software-properties-common
+          docker pull ${{ matrix.image }}
+          docker run --name build-container -d -v ${{ github.workspace }}:/workspace ${{ matrix.image }} tail -f /dev/null
 
       - name: Set up Fortran
         uses: fortran-lang/setup-fortran@v1
