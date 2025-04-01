@@ -37,7 +37,7 @@ jobs:
       - name: Set up fpm
         uses: fortran-lang/setup-fpm@v5
         with:
-          fpm-version: v0.10.1
+          fpm-version: v0.11.0
 
       - name: Print compiler version
         run: $FC --version
@@ -69,11 +69,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { image: 'ubuntu:16.04', compiler: gcc, version: 4.9 }
-          - { image: 'ubuntu:18.04', compiler: gcc, version: 5 }
-          - { image: 'ubuntu:18.04', compiler: gcc, version: 6 }
-          - { image: ubuntu:20.04, compiler: gcc, version: 7 }
-          - { image: ubuntu:20.04, compiler: gcc, version: 8 }
+          - { image: 'gcc:4.9' }
+          - { image: 'gcc:5' }
+          - { image: 'gcc:6' }
+          - { image: 'gcc:7' }
+          - { image: 'gcc:8' }
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
@@ -87,20 +87,22 @@ jobs:
           docker pull ${{ matrix.image }}
           docker run --name build-container -d -v ${{ github.workspace }}:/workspace ${{ matrix.image }} tail -f /dev/null
 
-      - name: Set up Fortran
-        uses: fortran-lang/setup-fortran@v1
-        id: setup-fortran
-        with:
-          compiler: ${{ matrix.compiler }}
-          version: ${{ matrix.version }}
-
-      - name: Set up fpm
-        uses: fortran-lang/setup-fpm@v5
-        with:
-          fpm-version: v0.10.1
+      - name: Install Dependencies
+        env:
+          SCRIPT: |
+            wget https://github.com/fortran-lang/fpm/releases/download/v0.11.0/fpm-0.11.0-linux-x86_64-gcc-12 -o fpm
+            chmod +x fpm
+            mv fpm /usr/local/bin
+        run: docker exec build-container bash -c "$SCRIPT"
 
       - name: Print compiler version
-        run: $FC --version
+        env:
+          SCRIPT: |
+            gfortran --version
+        run: docker exec build-container bash -c "$SCRIPT"
 
       - name: Run test
-        run: fpm test
+        env:
+          SCRIPT: |
+            fpm test
+        run: docker exec build-container bash -c "$SCRIPT"
