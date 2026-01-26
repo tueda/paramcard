@@ -35,7 +35,7 @@ jobs:
           version: ${{ matrix.version }}
 
       - name: Set up fpm
-        uses: fortran-lang/setup-fpm@v8
+        uses: fortran-lang/setup-fpm@v9
         with:
           fpm-version: v0.11.0
 
